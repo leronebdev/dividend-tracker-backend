@@ -1,0 +1,15 @@
+spring:
+    datasource:
+            url: jdbc:postgresql://merciful:5432/dividend_tracker
+            username: wise
+            password: securepassword123
+            driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 2
+      idle-timeout: 20000
+      connection-timeout: 20000
+      pool-name: DTrackPool
+      
+      application:
+        name: Dividend-Tracker-Server
