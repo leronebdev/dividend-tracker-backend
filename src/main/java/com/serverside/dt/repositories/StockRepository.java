@@ -1,12 +1,12 @@
 package com.serverside.dt.repositories;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
-
 import com.serverside.dt.entities.Stock;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-@Repository
-public interface StockRepository extends JpaRepository<Stock, Long> {
-	
+import java.util.Optional;
+import java.util.UUID;
 
+public interface StockRepository extends JpaRepository<Stock, UUID> {
+
+    Optional<Stock> findByTicker(String ticker);
 }

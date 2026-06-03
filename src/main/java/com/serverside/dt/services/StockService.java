@@ -1,48 +1,61 @@
 package com.serverside.dt.services;
 
-import java.util.List;
-import java.util.Optional;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import com.serverside.dt.dtos.StockDTO;
+import com.serverside.dt.entities.Stock;
+import com.serverside.dt.mappers.StockMapper;
+import com.serverside.dt.repositories.StockRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import com.serverside.dt.entities.Stock;
-import com.serverside.dt.repositories.StockRepository;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class StockService {
 
-	@Autowired
-    private StockRepository repo;
-  
-    public Stock createStock(Stock stock) {
-        return repo.save(stock);
+    private final StockRepository repo;
+    private final StockMapper mapper;
+
+    public List<StockDTO> getAll() {
+        return repo.findAll().stream()
+                .map(mapper::toDTO)
+                .toList();
     }
 
-    public List<Stock> getAllStocks() {
-        return repo.findAll();
+    public StockDTO getById(UUID id) {
+        Stock entity = repo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Stock not found: " + id));
+        return mapper.toDTO(entity);
     }
 
-    public Optional<Stock> getStockById(Long id) {
-        return repo.findById(id);
+    public StockDTO create(StockDTO dto) {
+        Stock entity = mapper.toEntity(dto);
+        entity.setId(UUID.randomUUID());
+        entity.setCreatedDate(LocalDateTime.now());
+        entity.setLastUpdatedDate(LocalDateTime.now());
+        return mapper.toDTO(repo.save(entity));
     }
 
-    public Optional<Stock> updateStock(Long id, Stock updated) {
-        return repo.findById(id).map(existing -> {
-            existing.setTicker(updated.getTicker());
-            existing.setCompanyName(updated.getCompanyName());
-            existing.setAverageCost(updated.getAverageCost());
-            existing.setShares(updated.getShares());
-            existing.setDividendYield(updated.getDividendYield());
-            existing.setPurchaseDate(updated.getPurchaseDate());
-            existing.setAccount(updated.getAccount());
-            return repo.save(existing);
-        });
+    public StockDTO update(UUID id, StockDTO dto) {
+        Stock existing = repo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Stock not found: " + id));
+
+        existing.setTicker(dto.getTicker());
+        existing.setCompanyName(dto.getCompanyName());
+        existing.setSectorId(dto.getSectorId());
+        existing.setExDate(dto.getExDate());
+        existing.setCurrencyId(dto.getCurrencyId());
+        existing.setLastUpdatedDate(LocalDateTime.now());
+
+        return mapper.toDTO(repo.save(existing));
     }
 
-    public boolean deleteStock(Long id) {
-        if (!repo.existsById(id)) return false;
+    public void delete(UUID id) {
+        if (!repo.existsById(id)) {
+            throw new RuntimeException("Stock not found: " + id);
+        }
         repo.deleteById(id);
-        return true;
     }
 }

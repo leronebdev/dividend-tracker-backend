@@ -4,34 +4,28 @@ import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Entity
-@Table(name = "Stocks")
+@Table(name = "FX_History")
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Stock {
+public class FxHistory {
 
     @Id
-    @Column(name = "stock_id")
-    private UUID id;
-
-    @Column(name = "ticker", nullable = false, unique = true, length = 10)
-    private String ticker;
-
-    @Column(name = "company_name", length = 150)
-    private String companyName;
-
-    @Column(name = "sector_id")
-    private Integer sectorId;
-
-    @Column(name = "ex_date")
-    private LocalDate exDate;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "fx_id")
+    private Integer id;
 
     @Column(name = "currency_id", nullable = false)
     private Integer currencyId;
+
+    @Column(name = "fx_date", nullable = false)
+    private LocalDate fxDate;
+
+    @Column(name = "exchange_rate_to_cad", nullable = false)
+    private Double exchangeRateToCad;
 
     @Column(name = "created_date", nullable = false)
     private LocalDateTime createdDate;

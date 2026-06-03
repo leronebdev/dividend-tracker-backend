@@ -1,0 +1,54 @@
+package com.serverside.dt.controllers;
+
+import com.serverside.dt.dtos.DividendEventDTO;
+import com.serverside.dt.services.DividendEventService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.UUID;
+
+@RestController
+@RequestMapping("/api/dividend-events")
+@RequiredArgsConstructor
+public class DividendEventController {
+
+    private final DividendEventService service;
+
+    @GetMapping
+    public ResponseEntity<List<DividendEventDTO>> getAll() {
+        return ResponseEntity.ok(service.getAll());
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<DividendEventDTO> getById(@PathVariable UUID id) {
+        return ResponseEntity.ok(service.getById(id));
+    }
+
+    @GetMapping("/account/{accountId}")
+    public ResponseEntity<List<DividendEventDTO>> getByAccount(@PathVariable UUID accountId) {
+        return ResponseEntity.ok(service.getByAccount(accountId));
+    }
+
+    @GetMapping("/stock/{stockId}")
+    public ResponseEntity<List<DividendEventDTO>> getByStock(@PathVariable UUID stockId) {
+        return ResponseEntity.ok(service.getByStock(stockId));
+    }
+
+    @PostMapping
+    public ResponseEntity<DividendEventDTO> create(@RequestBody DividendEventDTO dto) {
+        return ResponseEntity.ok(service.create(dto));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<DividendEventDTO> update(@PathVariable UUID id, @RequestBody DividendEventDTO dto) {
+        return ResponseEntity.ok(service.update(id, dto));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable UUID id) {
+        service.delete(id);
+        return ResponseEntity.noContent().build();
+    }
+}

@@ -22,9 +22,17 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-webmvc")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
+   implementation("org.mapstruct:mapstruct:1.6.3")
+annotationProcessor("org.mapstruct:mapstruct-processor:1.6.3")
+developmentOnly("org.springframework.boot:spring-boot-devtools")
+
+   
 
     compileOnly("org.projectlombok:lombok")
-    annotationProcessor("org.projectlombok:lombok")
+     annotationProcessor("org.projectlombok:lombok")
+    annotationProcessor("org.projectlombok:lombok-mapstruct-binding:0.2.0")
+
+
 
     runtimeOnly("org.postgresql:postgresql")
 
@@ -39,4 +47,12 @@ dependencies {
 
 tasks.test {
     useJUnitPlatform()
+}
+
+sourceSets {
+    main {
+        java {
+            srcDir("build/generated/sources/annotationProcessor/java/main")
+        }
+    }
 }
