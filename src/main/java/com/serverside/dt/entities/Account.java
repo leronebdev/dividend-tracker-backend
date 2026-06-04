@@ -16,6 +16,9 @@ public class Account {
     @Id
     @Column(name = "account_id")
     private UUID id;
+    
+    @Column(name = "account_number", nullable = false, length = 100)
+    private String accountNumber;
 
     @Column(name = "account_name", nullable = false, length = 100)
     private String accountName;

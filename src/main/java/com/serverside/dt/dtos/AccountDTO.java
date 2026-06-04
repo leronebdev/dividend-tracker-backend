@@ -12,6 +12,7 @@ public class AccountDTO {
 
     private UUID id;
     private String accountName;
+    private String accountNumber;
     private String accountType;
     private LocalDateTime createdDate;
     private LocalDateTime lastUpdatedDate;

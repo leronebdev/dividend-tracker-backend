@@ -1,8 +1,9 @@
 package com.serverside.dt.mappers;
 
+import org.mapstruct.Mapper;
+
 import com.serverside.dt.dtos.AccountDTO;
 import com.serverside.dt.entities.Account;
-import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
 public interface AccountMapper {

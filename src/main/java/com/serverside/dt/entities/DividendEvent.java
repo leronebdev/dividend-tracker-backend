@@ -2,7 +2,7 @@ package com.serverside.dt.entities;
 
 import jakarta.persistence.*;
 import lombok.*;
-import java.time.LocalDate;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -15,7 +15,8 @@ import java.util.UUID;
 public class DividendEvent {
 
     @Id
-    @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(name = "dividend_event_id")
     private UUID id;
 
     @Column(name = "account_id", nullable = false)
@@ -24,26 +25,17 @@ public class DividendEvent {
     @Column(name = "stock_id", nullable = false)
     private UUID stockId;
 
-    @Column(name = "shares", nullable = false)
-    private Double shares;
+    @Column(name = "stock_dividend_detail_id", nullable = false)
+    private UUID stockDividendDetailId;
 
-    @Column(name = "dividend_per_share", nullable = false)
-    private Double dividendPerShare;
+    @Column(name = "shares_at_event", nullable = false, precision = 18, scale = 4)
+    private BigDecimal sharesAtEvent;
 
-    @Column(name = "amount", nullable = false)
-    private Double amount;
+    @Column(name = "total_amount", nullable = false, precision = 18, scale = 4)
+    private BigDecimal totalAmount;
 
-    @Column(name = "currency", nullable = false, length = 3)
-    private String currency;
-
-    @Column(name = "payout_date", nullable = false)
-    private LocalDate payoutDate;
-
-    @Column(name = "frequency_id", nullable = false)
-    private Integer frequencyId;
-
-    @Column(name = "source", nullable = false, length = 20)
-    private String source;
+    @Column(name = "fx_rate", precision = 18, scale = 6)
+    private BigDecimal fxRate;
 
     @Column(name = "created_date", nullable = false)
     private LocalDateTime createdDate;

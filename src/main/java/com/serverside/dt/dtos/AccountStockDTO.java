@@ -1,20 +1,18 @@
 package com.serverside.dt.dtos;
 
-import lombok.*;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-@Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
-public class AccountStockDTO {
+import lombok.Data;
 
+@Data
+public class AccountStockDTO {
     private UUID id;
     private UUID accountId;
     private UUID stockId;
-    private Double quantity;
-    private Double averagePrice;
+    private BigDecimal  shares;
+    private BigDecimal  averagePrice;
     private LocalDateTime createdDate;
     private LocalDateTime lastUpdatedDate;
 }
