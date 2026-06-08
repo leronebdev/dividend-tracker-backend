@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.serverside.dt.entities.Currency;
 
-public interface CurrencyRepository extends JpaRepository<Currency, Integer> {
+public interface CurrencyRepository extends JpaRepository<Currency, String> {
 
     Optional<Currency> findByCode(String code);
 }

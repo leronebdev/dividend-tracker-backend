@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.serverside.dt.dtos.AccountStockDTO;
+import com.serverside.dt.dtos.DividendEventRequestDTO;
 import com.serverside.dt.dtos.StockAccountProjectionDTO;
 import com.serverside.dt.dtos.StockRequestDTO;
 import com.serverside.dt.entities.Account;
@@ -344,6 +345,7 @@ public class AccountStockServiceImpl implements AccountStockService {
         // 4. Finally delete the stock itself
         stockRepository.deleteById(stockId);
     }
+   
 
     private BigDecimal calculateDividendYield(StockAccountProjection row)
     {
