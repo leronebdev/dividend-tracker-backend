@@ -44,9 +44,9 @@ public class StockService {
 
         existing.setTicker(dto.getTicker());
         existing.setCompanyName(dto.getCompanyName());
-        existing.setSectorId(dto.getSectorId());
-        existing.setExDate(dto.getExDate());
-        existing.setCurrencyId(dto.getCurrencyId());
+        //existing.setSectorId(dto.getSectorId());
+        //existing.setExDate(dto.getExDate());
+        existing.setCurrencyCode(dto.getCurrencyCode());
         existing.setLastUpdatedDate(LocalDateTime.now());
 
         return mapper.toDTO(repo.save(existing));

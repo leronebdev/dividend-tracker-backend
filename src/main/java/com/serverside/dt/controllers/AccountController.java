@@ -12,6 +12,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/accounts")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:5173")
 public class AccountController {
 
     private final AccountService service;
@@ -21,9 +22,9 @@ public class AccountController {
         return ResponseEntity.ok(service.getAll());
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<AccountDTO> getById(@PathVariable UUID id) {
-        return ResponseEntity.ok(service.getById(id));
+    @GetMapping("/{accountNumber}")
+    public ResponseEntity<AccountDTO> getById(@PathVariable("accountNumber") String accountNumber) {
+        return ResponseEntity.ok(service.getByAccountNumber(accountNumber));
     }
 
     @PostMapping
@@ -31,14 +32,15 @@ public class AccountController {
         return ResponseEntity.ok(service.create(dto));
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<AccountDTO> update(@PathVariable UUID id, @RequestBody AccountDTO dto) {
-        return ResponseEntity.ok(service.update(id, dto));
+    
+    @PutMapping("/{accountNumber}")
+    public ResponseEntity<AccountDTO> update(@PathVariable("accountNumber") String accountNumber, @RequestBody AccountDTO dto) {
+        return ResponseEntity.ok(service.update(accountNumber, dto));
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable UUID id) {
-        service.delete(id);
+    @DeleteMapping("/{accountNumber}")
+    public ResponseEntity<Void> delete(@PathVariable("accountNumber") String accountNumber) {
+        service.delete(accountNumber);
         return ResponseEntity.noContent().build();
     }
 }

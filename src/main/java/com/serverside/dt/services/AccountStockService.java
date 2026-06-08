@@ -4,6 +4,9 @@ import java.util.List;
 import java.util.UUID;
 
 import com.serverside.dt.dtos.AccountStockDTO;
+import com.serverside.dt.dtos.StockAccountProjectionDTO;
+import com.serverside.dt.dtos.StockRequestDTO;
+
 
 public interface AccountStockService {
     List<AccountStockDTO> getAll();
@@ -12,5 +15,9 @@ public interface AccountStockService {
     AccountStockDTO create(AccountStockDTO dto);
     AccountStockDTO update(UUID id, AccountStockDTO dto);
     void delete(UUID id);
+	void createNewStockAccount(StockRequestDTO dto);
+	List<StockAccountProjectionDTO> getAllStockAccountsFromView();
+	void updateStockAccount(StockRequestDTO dto);
+	void deleteStockAccount(String stockIdStr);
 }
 

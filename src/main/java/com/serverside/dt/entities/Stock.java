@@ -2,12 +2,11 @@ package com.serverside.dt.entities;
 
 import jakarta.persistence.*;
 import lombok.*;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
-@Table(name = "Stocks")
+@Table(name = "stock")
 @Data
 @Builder
 @NoArgsConstructor
@@ -15,23 +14,20 @@ import java.util.UUID;
 public class Stock {
 
     @Id
-    @Column(name = "stock_id")
+    @Column(name = "stock_id", nullable = false)
     private UUID id;
 
-    @Column(name = "ticker", nullable = false, unique = true, length = 10)
+    @Column(name = "ticker", nullable = false, unique = true, length = 20)
     private String ticker;
 
-    @Column(name = "company_name", length = 150)
+    @Column(name = "company", nullable = false, length = 200)
     private String companyName;
 
-    @Column(name = "sector_id")
-    private Integer sectorId;
+    @Column(name = "currency_code", nullable = false, length = 3)
+    private String currencyCode;
 
-    @Column(name = "ex_date")
-    private LocalDate exDate;
-
-    @Column(name = "currency_id", nullable = false)
-    private Integer currencyId;
+    @Column(name = "payout_frequency", nullable = false)
+    private Integer payoutFrequency;   // FK → dividend_frequency.frequency_id
 
     @Column(name = "created_date", nullable = false)
     private LocalDateTime createdDate;

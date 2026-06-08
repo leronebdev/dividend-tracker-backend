@@ -5,7 +5,7 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "Currency")
+@Table(name = "currency")
 @Data
 @Builder
 @NoArgsConstructor
@@ -13,21 +13,11 @@ import java.time.LocalDateTime;
 public class Currency {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "currency_id")
-    private Integer id;
-
-    @Column(length = 3, nullable = false, unique = true)
+    @Column(name = "currency_code", length = 3, nullable = false)
     private String code;
 
-    @Column(length = 50, nullable = false)
+    @Column(name = "currency_name", length = 50, nullable = false)
     private String name;
-
-    @Column(length = 5)
-    private String symbol;
-
-    @Column(name = "exchange_rate_to_cad", nullable = false)
-    private Double exchangeRateToCad;
 
     @Column(name = "created_date", nullable = false)
     private LocalDateTime createdDate;

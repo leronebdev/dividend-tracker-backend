@@ -43,9 +43,7 @@ public class CurrencyService {
                 .orElseThrow(() -> new RuntimeException("Currency not found: " + id));
 
         existing.setCode(dto.getCode());
-        existing.setName(dto.getName());
-        existing.setSymbol(dto.getSymbol());
-        existing.setExchangeRateToCad(dto.getExchangeRateToCad());
+        existing.setName(dto.getName());        
         existing.setLastUpdatedDate(LocalDateTime.now());
 
         return mapper.toDTO(repo.save(existing));

@@ -1,10 +1,12 @@
 package com.serverside.dt.services;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.serverside.dt.dtos.AccountDTO;
 import com.serverside.dt.entities.Account;
@@ -39,26 +41,55 @@ public class AccountService {
         }
 
         Account entity = mapper.toEntity(dto);
-        entity.setCreatedDate(LocalDateTime.now());
-
+        LocalDateTime now = LocalDateTime.now();
+        entity.setCreatedDate(now);
+        entity.setLastUpdatedDate(now);
         return mapper.toDTO(repo.save(entity));
     }
 
-    public AccountDTO update(UUID id, AccountDTO dto) {
-        Account existing = repo.findById(id)
-                .orElseThrow(() -> new RuntimeException("Account not found: " + id));
+    public AccountDTO update(String accountNumber, AccountDTO dto) {
+        Account existing = repo.findByAccountNumber(accountNumber)
+                .orElseThrow(() -> new RuntimeException("Account not found: " + accountNumber));
 
         existing.setAccountName(dto.getAccountName());
-        existing.setAccountType(dto.getAccountType());
+        existing.setAccountType(dto.getAccountType());        
+        existing.setLastUpdatedDate(LocalDateTime.now());
         // created_date should NOT change
 
         return mapper.toDTO(repo.save(existing));
     }
 
-    public void delete(UUID id) {
-        if (!repo.existsById(id)) {
-            throw new RuntimeException("Account not found: " + id);
+    @Transactional
+    public void delete(String accountNumber) {
+        if (!repo.existsByAccountNumber(accountNumber)) {
+            throw new RuntimeException("Account not found: " + accountNumber);
         }
-        repo.deleteById(id);
+        repo.deleteByAccountNumber(accountNumber);
+    }
+    @Transactional(readOnly = true)
+    public AccountDTO getByAccountNumber(String accountNumber) {
+        Account account = repo.findByAccountNumber(accountNumber)
+                .orElseThrow(() ->
+                        new RuntimeException("Account not found: " + accountNumber));
+        return mapper.toDTO(account);
+    }
+    @Transactional
+    public List<Account> createAll(List<AccountDTO> dtos) {
+        List<Account> saved = new ArrayList<>();
+
+        for (AccountDTO dto : dtos) {
+            Account account = new Account();
+            account.setAccountNumber(dto.getAccountNumber());
+            account.setAccountName(dto.getAccountName());
+            account.setAccountType(dto.getAccountType());
+            account.setCreatedDate(LocalDateTime.now());
+
+            // Save one by one
+            Account result = repo.save(account);
+            saved.add(result);
+        }
+
+        // If any save() throws, the entire transaction rolls back
+        return saved;
     }
 }

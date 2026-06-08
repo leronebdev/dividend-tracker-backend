@@ -15,6 +15,7 @@ public class Account {
 
     @Id
     @Column(name = "account_id")
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
     
     @Column(name = "account_number", nullable = false, length = 100)

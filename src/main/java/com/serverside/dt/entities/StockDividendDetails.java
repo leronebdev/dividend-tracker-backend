@@ -32,10 +32,10 @@ public class StockDividendDetails {
     @Column(name = "stock_id", nullable = false)
     private UUID stockId;
 
-    @Column(name = "payout_date", nullable = false)
+    @Column(name = "payout_date", nullable = true)
     private LocalDate payoutDate;
 
-    @Column(name = "ex_date", nullable = false)
+    @Column(name = "ex_date", nullable = true)
     private LocalDate exDate;
 
     @Column(name = "dividend_per_share", nullable = false, precision = 10, scale = 4)

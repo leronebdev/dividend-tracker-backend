@@ -1,12 +1,17 @@
 package com.serverside.dt.repositories;
 
-import com.serverside.dt.entities.AccountStock;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.List;
-import java.util.UUID;
+import com.serverside.dt.entities.AccountStock;
 
 public interface AccountStockRepository extends JpaRepository<AccountStock, UUID> {
 
     List<AccountStock> findByAccountId(UUID accountId);
+    Optional<AccountStock> findByAccountIdAndStockId(UUID accountId, UUID stockId);
+    void deleteByStockId(UUID stockId);
+    
 }

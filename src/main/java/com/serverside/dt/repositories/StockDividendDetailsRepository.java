@@ -1,14 +1,16 @@
 package com.serverside.dt.repositories;
 
-import com.serverside.dt.entities.StockDividendDetails;
+import java.util.Optional;
+import java.util.UUID;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.List;
-import java.util.UUID;
+import com.serverside.dt.entities.StockDividendDetails;
 
 public interface StockDividendDetailsRepository extends JpaRepository<StockDividendDetails, UUID> {
 
-    List<StockDividendDetails> findByStockId(UUID stockId);
+    Optional<StockDividendDetails> findByStockId(UUID stockId);
 
     boolean existsByStockId(UUID stockId);
+    void deleteByStockId(UUID stockId);
 }

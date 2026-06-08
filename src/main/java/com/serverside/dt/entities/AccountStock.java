@@ -1,6 +1,7 @@
 package com.serverside.dt.entities;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -33,6 +34,11 @@ public class AccountStock {
 
     @Column(name = "stock_id", nullable = false)
     private UUID stockId;
+    @Column(name = "purchased_date")
+    private LocalDate purchasedDate;
+
+    @Column(name = "sold_date")
+    private LocalDate soldDate;
 
     @Column(name = "shares", nullable = false, precision = 18, scale = 4)
     private BigDecimal  shares;

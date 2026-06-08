@@ -16,7 +16,7 @@ public class StockDTO {
     private String companyName;
     private Integer sectorId;
     private LocalDate exDate;
-    private Integer currencyId;
+    private String currencyCode;
     private LocalDateTime createdDate;
     private LocalDateTime lastUpdatedDate;
 }

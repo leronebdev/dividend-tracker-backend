@@ -4,7 +4,9 @@ package com.serverside.dt.controllers;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,13 +17,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.serverside.dt.dtos.AccountStockDTO;
+import com.serverside.dt.dtos.StockAccountProjectionDTO;
+import com.serverside.dt.dtos.StockRequestDTO;
 import com.serverside.dt.services.AccountStockService;
 
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/account-stocks")
+@RequestMapping("/api/stockAccounts")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:5173")
 public class AccountStockController {
 
     private final AccountStockService accountStockService;
@@ -41,22 +46,30 @@ public class AccountStockController {
         return ResponseEntity.ok(accountStockService.getByAccountId(accountId));
     }
 
-    @PostMapping
-    public ResponseEntity<AccountStockDTO> create(@RequestBody AccountStockDTO dto) {
-        return ResponseEntity.ok(accountStockService.create(dto));
-    }
-
     @PutMapping("/{id}")
-    public ResponseEntity<AccountStockDTO> update(
-            @PathVariable UUID id,
-            @RequestBody AccountStockDTO dto
+    public ResponseEntity<Void> updateStock(
+            @PathVariable("id") String id,
+            @RequestBody StockRequestDTO dto
     ) {
-        return ResponseEntity.ok(accountStockService.update(id, dto));
+    	accountStockService.updateStockAccount(dto);
+        return ResponseEntity.ok().build();
+    }
+    @PostMapping
+    public ResponseEntity<Void> createStock(@RequestBody StockRequestDTO dto) {
+        accountStockService.createNewStockAccount(dto);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable UUID id) {
-        accountStockService.delete(id);
+    public ResponseEntity<Void> delete(@PathVariable("id") String id) {
+        accountStockService.deleteStockAccount(id);
         return ResponseEntity.noContent().build();
     }
+    @GetMapping("/all")
+    public List<StockAccountProjectionDTO> getAllStockAccounts() {
+        return accountStockService.getAllStockAccountsFromView();
+
+    }
+
 }
+

@@ -75,15 +75,15 @@ class AccountServiceTest {
 
     @Test
     void update_updatesAccount() {
-        UUID id = UUID.randomUUID();
+    	String accountNumber = "1231";
         Account existing = new Account();
         AccountDTO dto = new AccountDTO();
 
-        when(repo.findById(id)).thenReturn(Optional.of(existing));
+        when(repo.findByAccountNumber(accountNumber)).thenReturn(Optional.of(existing));
         when(repo.save(existing)).thenReturn(existing);
         when(mapper.toDTO(existing)).thenReturn(dto);
 
-        AccountDTO result = service.update(id, dto);
+        AccountDTO result = service.update(accountNumber, dto);
 
         assertNotNull(result);
         verify(repo).save(existing);
@@ -91,11 +91,11 @@ class AccountServiceTest {
 
     @Test
     void delete_removesAccount() {
-        UUID id = UUID.randomUUID();
-        when(repo.existsById(id)).thenReturn(true);
+       String accountNumber = "1231";
+        when(repo.existsByAccountNumber	(accountNumber)).thenReturn(true);
 
-        service.delete(id);
+        service.delete(accountNumber);
 
-        verify(repo).deleteById(id);
+        verify(repo).deleteByAccountNumber(accountNumber);
     }
 }
