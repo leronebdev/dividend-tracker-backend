@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -12,7 +11,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.serverside.dt.dtos.AccountStockDTO;
-import com.serverside.dt.dtos.DividendEventRequestDTO;
 import com.serverside.dt.dtos.StockAccountProjectionDTO;
 import com.serverside.dt.dtos.StockRequestDTO;
 import com.serverside.dt.entities.Account;
@@ -29,6 +27,7 @@ import com.serverside.dt.repositories.AccountStockRepository;
 import com.serverside.dt.repositories.CurrencyRepository;
 import com.serverside.dt.repositories.DividendEventRepository;
 import com.serverside.dt.repositories.DividendFrequencyRepository;
+import com.serverside.dt.repositories.StockAccountViewCustomRepository;
 import com.serverside.dt.repositories.StockAccountViewRepository;
 import com.serverside.dt.repositories.StockDividendDetailsRepository;
 import com.serverside.dt.repositories.StockRepository;
@@ -50,6 +49,7 @@ public class AccountStockServiceImpl implements AccountStockService {
 	private final DividendFrequencyRepository dividendFrequencyRepository;
 	private final DividendEventRepository dividendEventRepository;
 	private final StockAccountViewRepository stockAccountViewRepository;
+	private final StockAccountViewCustomRepository stockAccountViewCustomRepository;
 
     @Override
     public List<AccountStockDTO> getAll() {
@@ -284,50 +284,14 @@ public class AccountStockServiceImpl implements AccountStockService {
     }
 
     public List<StockAccountProjectionDTO> getAllStockAccountsFromView() {
-
-        List<StockAccountProjection> rows =
-                stockAccountViewRepository.findAllStockAccounts();
-
-        List<StockAccountProjectionDTO> results = new ArrayList<>();
-
-        for (StockAccountProjection row : rows) {
-
-            // Convert PostgreSQL Array → List<String>
-            List<String> payoutDates = new ArrayList<>();
-            try {
-                if (row.getPayoutDates() != null) {
-                    Object array = row.getPayoutDates().getArray();
-                    if (array instanceof Object[] arr) {
-                        for (Object o : arr) {
-                            payoutDates.add(o.toString());
-                        }
-                    }
-                }
-            } catch (Exception ignored) {}
-
-            StockAccountProjectionDTO dto = StockAccountProjectionDTO.builder()
-                    .id(row.getStockId().toString())
-                    .ticker(row.getTicker())
-                    .company(row.getCompany())
-                    .account(row.getAccountNumber())
-                    .currency(row.getCurrencyCode())
-                    .shares(row.getShares())
-                    .avgCost(row.getAveragePrice())
-                    .purchaseDate(row.getPurchaseDate() != null ? row.getPurchaseDate().toString() : null)
-                    .soldDate(row.getSoldDate() != null && !row.getSoldDate().equals("") ? row.getSoldDate().toString() : null)
-                    .dividendPerShare(row.getDividendPerShare())
-                    .dividendYield(calculateDividendYield(row))
-                    .payoutFrequency(row.getPayoutFrequency())
-                    .exDividendDate(row.getExDate() != null ? row.getExDate().toString() : null)
-                    .payoutDates(payoutDates)
-                    .lastPayoutDate(row.getLastPayoutDate() != null ? row.getLastPayoutDate().toString() : null)
-                    .build();
-
-            results.add(dto);
-        }
-
-        return results;
+    	List<StockAccountProjectionDTO> results = stockAccountViewCustomRepository.fetchAllFromView();
+    	results.stream().forEach(result ->{
+			BigDecimal dividendYield = calculateDividendYield(result);
+			result.setDividendYield(dividendYield);
+    	});
+    	return results;
     }
+
     @Transactional
     public void deleteStockAccount(String stockIdStr) {
 
@@ -345,11 +309,10 @@ public class AccountStockServiceImpl implements AccountStockService {
         // 4. Finally delete the stock itself
         stockRepository.deleteById(stockId);
     }
-   
 
-    private BigDecimal calculateDividendYield(StockAccountProjection row)
+    private BigDecimal calculateDividendYield(StockAccountProjectionDTO row)
     {
-    	BigDecimal yield = new BigDecimal(row.getDividendPerShare().doubleValue() * Integer.valueOf(row.getPayoutFrequency()) / row.getAveragePrice().doubleValue()).setScale(2, RoundingMode.HALF_UP);
+    	BigDecimal yield = new BigDecimal(row.getDividendPerShare().doubleValue() * Integer.valueOf(row.getPayoutFrequency()) / row.getAvgCost().doubleValue()).setScale(2, RoundingMode.HALF_UP);
     	
     	return yield.floatValue() * 100f > 0 ? new BigDecimal(yield.floatValue() * 100f) : BigDecimal.ZERO;
     }

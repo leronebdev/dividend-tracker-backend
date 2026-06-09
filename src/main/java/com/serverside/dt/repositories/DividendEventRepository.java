@@ -13,6 +13,11 @@ public interface DividendEventRepository extends JpaRepository<DividendEvent, UU
 
     List<DividendEvent> findByStockId(UUID stockId);
     List<DividendEvent> findAll();
+    void deleteByStockIdAndStockDividendDetailIdAndAccountId(
+            UUID stockId,
+            UUID stockDividendDetailId,
+            UUID accountId
+    );
 
     void deleteByStockId(UUID stockId);
 }

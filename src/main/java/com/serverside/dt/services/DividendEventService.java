@@ -1,5 +1,6 @@
 package com.serverside.dt.services;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -24,4 +25,5 @@ public interface DividendEventService {
 
     void delete(UUID id);
     void addPayoutDate(DividendEventRequestDTO dto);
+    void removePayoutDate(String stockId, String payoutDate, String accountId);
 }
