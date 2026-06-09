@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.serverside.dt.dtos.DividendEventDTO;
@@ -74,6 +75,23 @@ public class DividendEventController {
     	service.addPayoutDate(dto);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
+   
+
+    @DeleteMapping("/{stockId}/payouts")
+    public ResponseEntity<Void> removePayoutDate(
+            @PathVariable("stockId") String stockId,
+            @RequestParam("payoutDate") String payoutDate,
+            @RequestParam("accountNumber") String accountNumber
+    ) {
+    	service.removePayoutDate(
+                stockId,
+                payoutDate,
+                accountNumber
+        );
+
+        return ResponseEntity.ok().build();
+    }
+
 
     
 

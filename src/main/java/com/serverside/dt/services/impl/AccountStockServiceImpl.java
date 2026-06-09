@@ -260,7 +260,7 @@ public class AccountStockServiceImpl implements AccountStockService {
 
         // ---- UPDATE DIVIDEND DETAILS ----
         StockDividendDetails details = stockDividendDetailsRepository
-                .findByStockId(stockId)
+                .findTopByStockIdOrderByLastUpdatedDateDesc(stockId)
                 .orElseThrow(() -> new IllegalArgumentException("Dividend details not found for stock: " + dto.getId()));
 
         details.setDividendPerShare(dto.getDividendPerShare());
@@ -310,10 +310,42 @@ public class AccountStockServiceImpl implements AccountStockService {
         stockRepository.deleteById(stockId);
     }
 
-    private BigDecimal calculateDividendYield(StockAccountProjectionDTO row)
-    {
-    	BigDecimal yield = new BigDecimal(row.getDividendPerShare().doubleValue() * Integer.valueOf(row.getPayoutFrequency()) / row.getAvgCost().doubleValue()).setScale(2, RoundingMode.HALF_UP);
-    	
-    	return yield.floatValue() * 100f > 0 ? new BigDecimal(yield.floatValue() * 100f) : BigDecimal.ZERO;
+    private BigDecimal calculateDividendYield(StockAccountProjectionDTO row) {
+
+        BigDecimal dividend = row.getDividendPerShare();
+        String freqStr = row.getPayoutFrequency();
+        BigDecimal avgCost = row.getAvgCost();
+
+        // Null or zero protection
+        if (dividend == null || avgCost == null || avgCost.compareTo(BigDecimal.ZERO) == 0) {
+            return BigDecimal.ZERO;
+        }
+
+        if (freqStr == null || freqStr.isBlank()) {
+            return BigDecimal.ZERO;
+        }
+
+        int frequency;
+        try {
+            frequency = Integer.parseInt(freqStr);
+        } catch (NumberFormatException ex) {
+            return BigDecimal.ZERO;
+        }
+
+        if (frequency <= 0) {
+            return BigDecimal.ZERO;
+        }
+
+        // yield = (dividendPerShare * frequency) / avgCost
+        BigDecimal yield = dividend
+                .multiply(BigDecimal.valueOf(frequency))
+                .divide(avgCost, 6, RoundingMode.HALF_UP); // internal precision
+
+        // Convert to percentage with 2 decimals
+        BigDecimal percent = yield
+                .multiply(BigDecimal.valueOf(100))
+                .setScale(2, RoundingMode.HALF_UP);
+
+        return percent.compareTo(BigDecimal.ZERO) > 0 ? percent : BigDecimal.ZERO;
     }
 }
