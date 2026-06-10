@@ -290,21 +290,23 @@ public class AccountStockServiceImpl implements AccountStockService {
     }
 
     @Transactional
-    public void deleteStockAccount(String stockIdStr) {
-
-        UUID stockId = UUID.fromString(stockIdStr);
-
+    @Override
+    public void deleteStockAccount(String stockIdStr, String accountNumber) {
+    	
+    	UUID stockId = UUID.fromString(stockIdStr);
+    	 
+    	Account account = accountRepository.findByAccountNumber(accountNumber)
+                 .orElseThrow(() -> new IllegalArgumentException("Account not found: " + accountNumber));
+    	
+    	StockDividendDetails details = stockDividendDetailsRepository
+                .findTopByStockIdOrderByLastUpdatedDateDesc(stockId)
+                .orElseThrow(() -> new IllegalArgumentException("Dividend details not found for stock: " + stockIdStr));
         // 1. Delete all dividend events for this stock
-        dividendEventRepository.deleteByStockId(stockId);
+        dividendEventRepository.deleteByStockIdAndStockDividendDetailIdAndAccountId(stockId, details.getId(), account.getId());
 
         // 2. Delete all account-stock relationships
-        accountStockRepository.deleteByStockId(stockId);
-
-        // 3. Delete dividend details
-        stockDividendDetailsRepository.deleteByStockId(stockId);
-
-//        // 4. Finally delete the stock itself
-//        stockRepository.deleteById(stockId);
+        accountStockRepository.deleteByStockIdAndAccountId(stockId, account.getId());
+        
     }
 
     private BigDecimal calculateDividendYield(StockAccountProjectionDTO row) {

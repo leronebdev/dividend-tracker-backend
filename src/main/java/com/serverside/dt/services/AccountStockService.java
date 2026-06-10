@@ -18,6 +18,6 @@ public interface AccountStockService {
 	void createNewStockAccount(StockRequestDTO dto);
 	List<StockAccountProjectionDTO> getAllStockAccountsFromView();
 	void updateStockAccount(StockRequestDTO dto);
-	void deleteStockAccount(String stockIdStr);
+	 void deleteStockAccount(String stockId, String accountNumber);
 }
 

@@ -60,9 +60,9 @@ public class AccountStockController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable("id") String id) {
-        accountStockService.deleteStockAccount(id);
+    @DeleteMapping("/{stockId}/{accountNumber}")
+    public ResponseEntity<Void> delete(@PathVariable("stockId") String stockId, @PathVariable("accountNumber") String accountNumber) {
+        accountStockService.deleteStockAccount(stockId,accountNumber);
         return ResponseEntity.noContent().build();
     }
     @GetMapping("/all")

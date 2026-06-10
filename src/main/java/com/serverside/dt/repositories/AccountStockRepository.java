@@ -12,6 +12,6 @@ public interface AccountStockRepository extends JpaRepository<AccountStock, UUID
 
     List<AccountStock> findByAccountId(UUID accountId);
     Optional<AccountStock> findByAccountIdAndStockId(UUID accountId, UUID stockId);
-    void deleteByStockId(UUID stockId);
+    void deleteByStockIdAndAccountId(UUID stockId,UUID accountId);
     
 }
