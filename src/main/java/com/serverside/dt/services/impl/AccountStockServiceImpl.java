@@ -247,13 +247,13 @@ public class AccountStockServiceImpl implements AccountStockService {
                 .orElseThrow(() -> new IllegalArgumentException("Stock not found: " + dto.getId()));
 
         // ---- UPDATE STOCK ----
-        stock.setTicker(dto.getTicker());
-        stock.setCompanyName(dto.getCompany());
-        stock.setCurrencyCode(currency.getCode());
-        stock.setPayoutFrequency(frequency.getId());
-        stock.setLastUpdatedDate(LocalDateTime.now());
-
-        stockRepository.save(stock);
+//        stock.setTicker(dto.getTicker());
+//        stock.setCompanyName(dto.getCompany());
+//        stock.setCurrencyCode(currency.getCode());
+//        stock.setPayoutFrequency(frequency.getId());
+//        stock.setLastUpdatedDate(LocalDateTime.now());
+//
+//        stockRepository.save(stock);
 
         // ---- UPDATE DIVIDEND DETAILS ----
         StockDividendDetails details = stockDividendDetailsRepository
@@ -303,8 +303,8 @@ public class AccountStockServiceImpl implements AccountStockService {
         // 3. Delete dividend details
         stockDividendDetailsRepository.deleteByStockId(stockId);
 
-        // 4. Finally delete the stock itself
-        stockRepository.deleteById(stockId);
+//        // 4. Finally delete the stock itself
+//        stockRepository.deleteById(stockId);
     }
 
     private BigDecimal calculateDividendYield(StockAccountProjectionDTO row) {
