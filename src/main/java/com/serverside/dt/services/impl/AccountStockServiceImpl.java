@@ -127,34 +127,31 @@ public class AccountStockServiceImpl implements AccountStockService {
         // If you later add sector to the DTO, resolve it here:
         // sector = sectorRepository.findById(dto.getSectorId()).orElse(null);
 
-        // 5. Create or update Stock
-        UUID stockId = UUID.fromString(dto.getId());
-
-        Stock stock = stockRepository.findById(stockId)
-                .orElseGet(() -> Stock.builder()
-                        .id(stockId)
-                        .ticker(dto.getTicker())
-                        .companyName(dto.getCompany())                        
-                        //.exDate(dto.getExDividendDate() != null ? LocalDate.parse(dto.getExDividendDate()) : null)
-                        .currencyCode(currency.getCode())
-                        .createdDate(LocalDateTime.now())
-                        .lastUpdatedDate(LocalDateTime.now())
-                        .build()
-                );
+        // 5. Create or update Stock       
+       
+        if (!stockRepository.existsByTicker(dto.getTicker())) {
+        	Stock stock  = Stock.builder()
+                    .id(UUID.fromString(dto.getId()))
+                    .ticker(dto.getTicker())
+                    .companyName(dto.getCompany())
+                    .currencyCode(currency.getCode())
+                    .payoutFrequency(frequency.getId())
+                    .createdDate(LocalDateTime.now())
+                    .lastUpdatedDate(LocalDateTime.now())
+                    .build();
+           stockRepository.save(stock);
+        }
                 
-
-        stock.setTicker(dto.getTicker());
-        stock.setCompanyName(dto.getCompany());        
-        stock.setCurrencyCode(dto.getCurrency());
-        stock.setPayoutFrequency(frequency.getId());
-        stockRepository.save(stock);
+        Stock stock = stockRepository.findByTicker(dto.getTicker()).get();
+        UUID stockId =stock.getId();
+        
 
         // 6. Create or update StockDividendDetails
         StockDividendDetails details = stockDividendDetailsRepository
-                .findByStockId(stock.getId())
+                .findTopByStockIdOrderByLastUpdatedDateDesc(stockId)
                 .orElseGet(() -> StockDividendDetails.builder()
                         //.id(UUID.randomUUID())
-                        .stockId(stock.getId())
+                        .stockId(stockId)
                         .dividendPerShare(dto.getDividendPerShare())
                         //.dividendYield(dto.getDividendYield())
                         //.d(frequency.getId())
@@ -174,10 +171,10 @@ public class AccountStockServiceImpl implements AccountStockService {
 
         // 7. Create or update AccountStock
         AccountStock accountStock = accountStockRepository
-                .findByAccountIdAndStockId(account.getId(), stock.getId())
+                .findByAccountIdAndStockId(account.getId(), stockId)
                 .orElseGet(() -> AccountStock.builder()
                         .accountId(account.getId())
-                        .stockId(stock.getId())
+                        .stockId(stockId)
                         .createdDate(LocalDateTime.now())
                         .build()
                 );
@@ -192,7 +189,7 @@ public class AccountStockServiceImpl implements AccountStockService {
        // LocalDate payoutDate = LocalDate.parse(dateStr);
 
         DividendEvent event = DividendEvent.builder()                        
-                .stockId(stock.getId())
+                .stockId(stockId)
                 .stockDividendDetailId(sdd.getId())
                 .accountId(account.getId())                        
                 .sharesAtEvent(dto.getShares())                        
