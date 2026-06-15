@@ -11,6 +11,7 @@ import com.serverside.dt.entities.AccountStock;
 public interface AccountStockRepository extends JpaRepository<AccountStock, UUID> {
 
     List<AccountStock> findByAccountId(UUID accountId);
+    List<AccountStock>findByStockId(UUID stockId);
     Optional<AccountStock> findByAccountIdAndStockId(UUID accountId, UUID stockId);
     void deleteByStockIdAndAccountId(UUID stockId,UUID accountId);
     
