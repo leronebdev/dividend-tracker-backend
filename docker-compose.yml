@@ -1,0 +1,26 @@
+version: "3.9"
+
+services:
+  client:
+    container_name: dividend_tracker_client
+    image: dividend_tracker_client:latest
+    restart: unless-stopped
+    ports:
+      - "8080:80"   # Frontend exposed on DividendServer:8080
+    networks:
+      - dtrack_net
+
+  server:
+    container_name: dividend_tracker_server
+    image: dividend_tracker_server:latest
+    restart: unless-stopped
+    environment:
+      SPRING_PROFILES_ACTIVE: "prod"
+    ports:
+      - "8483:8080"   # Backend exposed on DividendServer:8081
+    networks:
+      - dtrack_net
+
+networks:
+  dtrack_net:
+    driver: bridge

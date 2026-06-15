@@ -26,7 +26,6 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping("/api/dividend-events")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:5173")
 public class DividendEventController {
 
     private final DividendEventService service;

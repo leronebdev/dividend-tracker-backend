@@ -26,7 +26,6 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping("/api/stockAccounts")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:5173")
 public class AccountStockController {
 
     private final AccountStockService accountStockService;
