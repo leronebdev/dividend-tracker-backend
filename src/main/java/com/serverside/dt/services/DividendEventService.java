@@ -7,6 +7,7 @@ import java.util.UUID;
 import com.serverside.dt.dtos.DividendEventDTO;
 import com.serverside.dt.dtos.DividendEventRequestDTO;
 import com.serverside.dt.dtos.DividendEventResponseDTO;
+import com.serverside.dt.entities.DividendEvent;
 
 public interface DividendEventService {
 
@@ -22,8 +23,10 @@ public interface DividendEventService {
 
     DividendEventDTO update(UUID id, DividendEventDTO dto);
     List<DividendEventResponseDTO> getAllDividendEvents();
-
+    DividendEvent saveDividendEvent(DividendEvent dividendEvent);
     void delete(UUID id);
     void addPayoutDate(DividendEventRequestDTO dto);
     void removePayoutDate(String stockId, String payoutDate, String accountId);
+
+	void delete(String stockId, LocalDate payoutDate);
 }

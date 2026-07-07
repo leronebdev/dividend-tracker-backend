@@ -1,6 +1,7 @@
 package com.serverside.dt.dtos;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -13,6 +14,8 @@ public class AccountStockDTO {
     private UUID stockId;
     private BigDecimal  shares;
     private BigDecimal  averagePrice;
+    private LocalDate soldDate;
+    private LocalDate purchasedDate;
     private LocalDateTime createdDate;
     private LocalDateTime lastUpdatedDate;
 }

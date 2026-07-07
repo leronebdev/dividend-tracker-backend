@@ -1,12 +1,13 @@
 package com.serverside.dt.services.impl;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,7 +20,10 @@ import com.serverside.dt.entities.DividendEvent;
 import com.serverside.dt.entities.DividendFrequency;
 import com.serverside.dt.entities.Stock;
 import com.serverside.dt.entities.StockDividendDetails;
+import com.serverside.dt.events.PayoutDateAddedEvent;
+import com.serverside.dt.events.PayoutDateRemovedEvent;
 import com.serverside.dt.mappers.DividendEventMapper;
+import com.serverside.dt.mappers.StockDividendDetailsMapper;
 import com.serverside.dt.repositories.AccountRepository;
 import com.serverside.dt.repositories.AccountStockRepository;
 import com.serverside.dt.repositories.DividendEventRepository;
@@ -36,7 +40,10 @@ public class DividendEventServiceImpl implements DividendEventService {
 
     private final DividendEventRepository repo;
     private final DividendEventMapper mapper;
+    @Autowired
+    private ApplicationEventPublisher eventPublisher;
 
+    private final StockDividendDetailsMapper stockDividendDetailsMapper;
     private final AccountRepository accountRepo;
     private final AccountStockRepository accountStockRepo;
     private final StockRepository stockRepo;
@@ -137,6 +144,11 @@ public class DividendEventServiceImpl implements DividendEventService {
         }
         repo.deleteById(id);
     }
+    @Override
+    public DividendEvent saveDividendEvent(DividendEvent dividendEvent) {
+    	DividendEvent result = dividendEventRepository.save(dividendEvent);
+    	return result;
+    }
     public List<DividendEventResponseDTO> getAllDividendEvents() {
 
         List<DividendEvent> events = dividendEventRepository.findAll();
@@ -194,67 +206,82 @@ public class DividendEventServiceImpl implements DividendEventService {
                 .findByPeriodsPerYear(Integer.valueOf(dto.getFrequency()))
                 .orElseThrow(() -> new IllegalArgumentException("Frequency not found: " + dto.getFrequency()));
 
-        // 3. Determine last ex-date
-        LocalDate lastExDate = stockDividendDetailsRepo
-                .findTopByStockIdOrderByExDateDesc(stockId)
-                .map(StockDividendDetails::getExDate)
-                .orElse(LocalDate.now().plusDays(30));
+        
+        Optional<StockDividendDetails>existingStockDividendDetails = stockDividendDetailsRepo
+        .findTopByStockIdOrderByExDateDesc(stockId);
+        StockDividendDetails details = null;
+        if(existingStockDividendDetails.isPresent())
+        {
+        	details = existingStockDividendDetails.get();
+        	if(details.getPayoutDate() == null || details.getPayoutDate().equals(""))
+        	{
 
-        // 4. Create NEW StockDividendDetails row
-        StockDividendDetails details = StockDividendDetails.builder()
-                .stockId(stock.getId())
-                .dividendPerShare(dto.getDividendPerShare())
-                .exDate(lastExDate)
-                .payoutDate(LocalDate.parse(dto.getPayoutDate()))
-                .createdDate(LocalDateTime.now())
-                .lastUpdatedDate(LocalDateTime.now())
-                .build();
+                details.setDividendPerShare(dto.getDividendPerShare());
+        		details.setPayoutDate(LocalDate.parse(dto.getPayoutDate()));
+        		details.setLastUpdatedDate(LocalDateTime.now());
+        	}
+        	else
+        	{
+        		 // 3. Determine last ex-date
+                LocalDate lastExDate = LocalDate.now().plusDays((12 / frequency.getPeriodsPerYear()) *30);
+        		
+                details = StockDividendDetails.builder()
+                        .stockId(stock.getId())
+                        .dividendPerShare(dto.getDividendPerShare())
+                        .exDate(lastExDate)
+                        .payoutDate(LocalDate.parse(dto.getPayoutDate()))
+                        .createdDate(LocalDateTime.now())
+                        .lastUpdatedDate(LocalDateTime.now())
+                        .build();
+        	}        	
+        	
+        }
+        else
+        {
+        	 // 3. Determine last ex-date
+            LocalDate lastExDate = LocalDate.now().plusDays((12 / frequency.getPeriodsPerYear()) *30);
 
-        stockDividendDetailsRepo.save(details);
-
-        // 5. Fetch ALL accountStocks for this stock
-        List<AccountStock> holdings = accountStockRepo.findByStockId(stockId);
-
-        // 6. Create a DividendEvent for EACH holding
-        for (AccountStock holding : holdings) {
-
-            BigDecimal shares = holding.getShares();
-            BigDecimal totalAmount = shares.multiply(dto.getDividendPerShare());
-
-            DividendEvent event = DividendEvent.builder()
+            // 4. Create NEW StockDividendDetails row
+            details = StockDividendDetails.builder()
                     .stockId(stock.getId())
-                    .stockDividendDetailId(details.getId())
-                    .accountId(holding.getAccountId())
-                    .sharesAtEvent(shares)
-                    .fxRate(new BigDecimal("1.36")) // or dynamic FX
-                    .totalAmount(totalAmount)
+                    .dividendPerShare(dto.getDividendPerShare())
+                    .exDate(lastExDate)
+                    .payoutDate(LocalDate.parse(dto.getPayoutDate()))
                     .createdDate(LocalDateTime.now())
                     .lastUpdatedDate(LocalDateTime.now())
                     .build();
-
-            dividendEventRepository.save(event);
         }
+        StockDividendDetails dets = stockDividendDetailsRepo.save(details);
+    	eventPublisher.publishEvent(new PayoutDateAddedEvent(stockDividendDetailsMapper.toDto(dets)));
+
+      
     }
-    @Override
-    @Transactional
+    @Override    
     public void removePayoutDate(String stockId, String payoutDate, String accountId) {
-
-        UUID stockUuid = UUID.fromString(stockId);
+        
         LocalDate payoutDateParsed = LocalDate.parse(payoutDate);
-
-        // 1. Find the StockDividendDetails row
-        StockDividendDetails detail = stockDividendDetailsRepo
-                .findByStockIdAndPayoutDate(stockUuid, payoutDateParsed)
-                .orElseThrow(() -> new IllegalStateException(
-                        "No StockDividendDetails found for stockId=" + stockId + " and payoutDate=" + payoutDate
-                ));
-
-        // ⭐ 2. Delete ALL DividendEvents tied to this payout (NOT just one account)
-        dividendEventRepository.deleteByStockDividendDetailId(detail.getId());
-
-        // ⭐ 3. Delete the StockDividendDetails record itself
-        stockDividendDetailsRepo.delete(detail);
+        eventPublisher.publishEvent(new PayoutDateRemovedEvent(stockId, accountId, payoutDateParsed));
+       
     }
+
+	@Override
+	@Transactional
+	public void delete(String stockId, LocalDate payoutDate) {	
+		UUID stockIdUUID = UUID.fromString(stockId);
+   	 // 1. Find the StockDividendDetails row
+       StockDividendDetails detail = stockDividendDetailsRepo
+               .findByStockIdAndPayoutDate(stockIdUUID, payoutDate)
+               .orElseThrow(() -> new IllegalStateException(
+                       "No StockDividendDetails found for stockId=" + stockId + " and payoutDate=" + payoutDate
+               ));
+
+       // ⭐ 2. Delete ALL DividendEvents tied to this payout (NOT just one account)
+       dividendEventRepository.deleteByStockDividendDetailId(detail.getId());
+
+       // ⭐ 3. Delete the StockDividendDetails record itself
+       stockDividendDetailsRepo.delete(detail);
+		
+	}
 
 
     

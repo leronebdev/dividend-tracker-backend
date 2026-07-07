@@ -7,6 +7,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,20 +20,19 @@ import com.serverside.dt.entities.AccountStock;
 import com.serverside.dt.entities.Currency;
 import com.serverside.dt.entities.DividendEvent;
 import com.serverside.dt.entities.DividendFrequency;
-import com.serverside.dt.entities.Sector;
 import com.serverside.dt.entities.Stock;
 import com.serverside.dt.entities.StockDividendDetails;
+import com.serverside.dt.events.AccountStockCreatedEvent;
 import com.serverside.dt.mappers.AccountStockMapper;
+import com.serverside.dt.mappers.StockDividendDetailsMapper;
 import com.serverside.dt.repositories.AccountRepository;
 import com.serverside.dt.repositories.AccountStockRepository;
 import com.serverside.dt.repositories.CurrencyRepository;
 import com.serverside.dt.repositories.DividendEventRepository;
 import com.serverside.dt.repositories.DividendFrequencyRepository;
 import com.serverside.dt.repositories.StockAccountViewCustomRepository;
-import com.serverside.dt.repositories.StockAccountViewRepository;
 import com.serverside.dt.repositories.StockDividendDetailsRepository;
 import com.serverside.dt.repositories.StockRepository;
-import com.serverside.dt.repositories.projections.StockAccountProjection;
 import com.serverside.dt.services.AccountStockService;
 
 import lombok.RequiredArgsConstructor;
@@ -45,11 +46,13 @@ public class AccountStockServiceImpl implements AccountStockService {
     private final CurrencyRepository currencyRepository;
     private final StockRepository stockRepository;
     private final AccountStockMapper accountMapper;
+    private final StockDividendDetailsMapper stockDividendDetailsMapper;
     private final StockDividendDetailsRepository stockDividendDetailsRepository;
 	private final DividendFrequencyRepository dividendFrequencyRepository;
-	private final DividendEventRepository dividendEventRepository;
-	private final StockAccountViewRepository stockAccountViewRepository;
+	private final DividendEventRepository dividendEventRepository;	
 	private final StockAccountViewCustomRepository stockAccountViewCustomRepository;
+	@Autowired
+	private ApplicationEventPublisher accountStockPublisher;
 
     @Override
     public List<AccountStockDTO> getAll() {
@@ -65,6 +68,12 @@ public class AccountStockServiceImpl implements AccountStockService {
                 .orElseThrow(() -> new RuntimeException("AccountStock not found: " + id));
         return accountMapper.toDTO(entity);
     }
+	@Override
+	public AccountStockDTO getByStockIdAndAccountId(UUID stockId, UUID accountId) {
+		 AccountStock entity = accountStockRepository.findByAccountIdAndStockId(accountId, stockId)
+	                .orElseThrow(() -> new RuntimeException("AccountStock not found by AccountId " + accountId + " and StockID: " + stockId));
+	        return accountMapper.toDTO(entity);
+	}
 
     @Override
     public List<AccountStockDTO> getByAccountId(UUID accountId) {
@@ -73,7 +82,13 @@ public class AccountStockServiceImpl implements AccountStockService {
                 .map(accountMapper::toDTO)
                 .toList();
     }
-
+    @Override
+	public List<AccountStockDTO> getByStyockId(String stockId) {
+    	 return accountStockRepository.findByStockId(UUID.fromString(stockId))
+                 .stream()
+                 .map(accountMapper::toDTO)
+                 .toList();
+	}
     @Override
 	public AccountStockDTO create(AccountStockDTO dto) {
     	dto.setCreatedDate(LocalDateTime.now());
@@ -121,11 +136,7 @@ public class AccountStockServiceImpl implements AccountStockService {
         DividendFrequency frequency = dividendFrequencyRepository
                 .findByPeriodsPerYear(Integer.valueOf(dto.getPayoutFrequency()))
                 .orElseThrow(() -> new IllegalArgumentException("Frequency not found: " + dto.getPayoutFrequency()));
-
-        // 4. Sector is optional / simple
-        Sector sector = null; // or a default if you want
-        // If you later add sector to the DTO, resolve it here:
-        // sector = sectorRepository.findById(dto.getSectorId()).orElse(null);
+       
 
         // 5. Create or update Stock       
        
@@ -185,42 +196,9 @@ public class AccountStockServiceImpl implements AccountStockService {
         accountStock.setLastUpdatedDate(LocalDateTime.now());
 
         accountStockRepository.save(accountStock);
+        
+        accountStockPublisher.publishEvent(new AccountStockCreatedEvent(accountMapper.toDTO(accountStock),stockDividendDetailsMapper.toDto(sdd))); // Publish the event);
 
-       // LocalDate payoutDate = LocalDate.parse(dateStr);
-
-        DividendEvent event = DividendEvent.builder()                        
-                .stockId(stockId)
-                .stockDividendDetailId(sdd.getId())
-                .accountId(account.getId())                        
-                .sharesAtEvent(dto.getShares())                        
-                .totalAmount(dto.getDividendPerShare().multiply(dto.getShares()))                        
-                .createdDate(LocalDateTime.now())
-                .lastUpdatedDate(LocalDateTime.now())
-                .build();
-
-        dividendEventRepository.save(event);
-        // 8. Persist historical payout dates
-//        if (dto.getPayoutDates() != null) {
-//            dto.getPayoutDates().forEach(dateStr -> {
-//
-//                LocalDate payoutDate = LocalDate.parse(dateStr);
-//
-//                DividendEvent event = DividendEvent.builder()                        
-//                        .stockId(stock.getId())
-//                        .stockDividendDetailId(sdd.getId())
-//                        .accountId(account.getId())                        
-//                        .sharesAtEvent(dto.getShares())                        
-//                        .totalAmount(dto.getDividendPerShare().multiply(dto.getShares()))                        
-//                        .createdDate(LocalDateTime.now())
-//                        .lastUpdatedDate(LocalDateTime.now())
-//                        .build();
-//
-//                dividendEventRepository.save(event);
-//            });
-
-        // 9. FXHistory (optional)
-        // fxHistoryRepository.save(...)
-   // }
 
     }
     @Transactional
@@ -247,13 +225,13 @@ public class AccountStockServiceImpl implements AccountStockService {
                 .orElseThrow(() -> new IllegalArgumentException("Stock not found: " + dto.getId()));
 
         // ---- UPDATE STOCK ----
-//        stock.setTicker(dto.getTicker());
-//        stock.setCompanyName(dto.getCompany());
-//        stock.setCurrencyCode(currency.getCode());
-//        stock.setPayoutFrequency(frequency.getId());
-//        stock.setLastUpdatedDate(LocalDateTime.now());
-//
-//        stockRepository.save(stock);
+        stock.setTicker(dto.getTicker());
+        stock.setCompanyName(dto.getCompany());
+        stock.setCurrencyCode(currency.getCode());
+        stock.setPayoutFrequency(frequency.getId());
+        stock.setLastUpdatedDate(LocalDateTime.now());
+
+        stockRepository.save(stock);
 
         // ---- UPDATE DIVIDEND DETAILS ----
         StockDividendDetails details = stockDividendDetailsRepository
@@ -347,4 +325,7 @@ public class AccountStockServiceImpl implements AccountStockService {
 
         return percent.compareTo(BigDecimal.ZERO) > 0 ? percent : BigDecimal.ZERO;
     }
+
+
+	
 }
