@@ -17,3 +17,7 @@ application:
 
 cors:
   allowed-origins: "http://merciful:8080"
+  
+  dividend-tracker:
+    fx:
+      api-url: "https://api.frankfurter.app"
