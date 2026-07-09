@@ -34,6 +34,7 @@ public class AccountStock {
 
     @Column(name = "stock_id", nullable = false)
     private UUID stockId;
+
     @Column(name = "purchased_date")
     private LocalDate purchasedDate;
 
@@ -41,10 +42,10 @@ public class AccountStock {
     private LocalDate soldDate;
 
     @Column(name = "shares", nullable = false, precision = 18, scale = 4)
-    private BigDecimal  shares;
+    private BigDecimal shares;
 
     @Column(name = "average_price", nullable = false, precision = 18, scale = 4)
-    private BigDecimal  averagePrice;
+    private BigDecimal averagePrice;
 
     @Column(name = "created_date", nullable = false)
     private LocalDateTime createdDate;

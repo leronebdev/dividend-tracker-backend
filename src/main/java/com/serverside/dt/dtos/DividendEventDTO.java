@@ -11,6 +11,7 @@ public class DividendEventDTO {
     private UUID accountId;
     private UUID stockId;
     private UUID stockDividendDetailId;
+    private Integer taxRuleId;
     private BigDecimal sharesAtEvent;
     private BigDecimal totalAmount;
     private BigDecimal fxRate;

@@ -12,13 +12,13 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.serverside.dt.commands.CalculateTaxCommand;
 import com.serverside.dt.dtos.AccountStockDTO;
 import com.serverside.dt.dtos.StockAccountProjectionDTO;
 import com.serverside.dt.dtos.StockRequestDTO;
 import com.serverside.dt.entities.Account;
 import com.serverside.dt.entities.AccountStock;
 import com.serverside.dt.entities.Currency;
-import com.serverside.dt.entities.DividendEvent;
 import com.serverside.dt.entities.DividendFrequency;
 import com.serverside.dt.entities.Stock;
 import com.serverside.dt.entities.StockDividendDetails;
@@ -44,6 +44,7 @@ public class AccountStockServiceImpl implements AccountStockService {
     private final AccountStockRepository accountStockRepository;
     private final AccountRepository accountRepository;
     private final CurrencyRepository currencyRepository;
+    private final CalculateTaxCommand calculateTax;
     private final StockRepository stockRepository;
     private final AccountStockMapper accountMapper;
     private final StockDividendDetailsMapper stockDividendDetailsMapper;
@@ -264,6 +265,7 @@ public class AccountStockServiceImpl implements AccountStockService {
 			BigDecimal dividendYield = calculateDividendYield(result);
 			result.setDividendYield(dividendYield);
     	});
+    	results.stream().forEach(result -> calculateTax.calculate(result.getAccount(), result));
     	return results;
     }
 

@@ -11,6 +11,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.serverside.dt.commands.CalculateTaxCommand;
 import com.serverside.dt.dtos.DividendEventDTO;
 import com.serverside.dt.dtos.DividendEventRequestDTO;
 import com.serverside.dt.dtos.DividendEventResponseDTO;
@@ -42,7 +43,7 @@ public class DividendEventServiceImpl implements DividendEventService {
     private final DividendEventMapper mapper;
     @Autowired
     private ApplicationEventPublisher eventPublisher;
-
+    private final CalculateTaxCommand calculateTax;
     private final StockDividendDetailsMapper stockDividendDetailsMapper;
     private final AccountRepository accountRepo;
     private final AccountStockRepository accountStockRepo;
@@ -184,12 +185,14 @@ public class DividendEventServiceImpl implements DividendEventService {
                     .dividendPerShare(details.getDividendPerShare())
                     .frequency(String.valueOf(frequency.getPeriodsPerYear()))
                     .payoutDate(details.getPayoutDate())
+                    .fxRate(event.getFxRate())
                     .shares(accountStock.getShares())
                     .source("historical")
                     .stockId(stock.getId().toString())
                     .ticker(stock.getTicker())
                     .build();
         }).toList();
+        dividendEventResponse.stream().forEach(der->calculateTax.calculate(der.getAccount(),der));
 		return dividendEventResponse;
     }
     @Transactional

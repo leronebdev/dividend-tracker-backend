@@ -1,18 +1,25 @@
 package com.serverside.dt.services;
 
-import com.serverside.dt.dtos.AccountDTO;
-import com.serverside.dt.entities.Account;
-import com.serverside.dt.mappers.AccountMapper;
-import com.serverside.dt.repositories.AccountRepository;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.*;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
-import java.time.LocalDateTime;
-import java.util.*;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import com.serverside.dt.dtos.AccountDTO;
+import com.serverside.dt.entities.Account;
+import com.serverside.dt.entities.AccountType;
+import com.serverside.dt.mappers.AccountMapper;
+import com.serverside.dt.repositories.AccountRepository;
 
 class AccountServiceTest {
 
@@ -23,7 +30,7 @@ class AccountServiceTest {
     private AccountMapper mapper;
 
     @InjectMocks
-    private AccountService service;
+    private AccountServiceImpl service;
 
     @BeforeEach
     void setup() {
@@ -62,8 +69,12 @@ class AccountServiceTest {
         AccountDTO dto = new AccountDTO();
         Account entity = new Account();
         Account saved = new Account();
+        AccountType accountType = new AccountType();
+        accountType.setId(1);
+        accountType.setTaxRule(null);
+        accountType.setTypeName("Test");
 
-        when(mapper.toEntity(dto)).thenReturn(entity);
+        when(mapper.toEntity(dto,accountType)).thenReturn(entity);
         when(repo.save(entity)).thenReturn(saved);
         when(mapper.toDTO(saved)).thenReturn(dto);
 

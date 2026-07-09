@@ -28,6 +28,9 @@ public class DividendEvent {
     @Column(name = "stock_dividend_detail_id", nullable = false)
     private UUID stockDividendDetailId;
 
+    @Column(name = "tax_rule_id")
+    private Integer taxRuleId;
+
     @Column(name = "shares_at_event", nullable = false, precision = 18, scale = 4)
     private BigDecimal sharesAtEvent;
 
@@ -36,6 +39,9 @@ public class DividendEvent {
 
     @Column(name = "fx_rate", precision = 18, scale = 6)
     private BigDecimal fxRate;
+
+    @Column(name = "fx_rate_used", precision = 18, scale = 6)
+    private BigDecimal fxRateUsed;
 
     @Column(name = "created_date", nullable = false)
     private LocalDateTime createdDate;

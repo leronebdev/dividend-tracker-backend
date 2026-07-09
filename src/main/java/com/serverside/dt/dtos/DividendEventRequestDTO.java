@@ -17,6 +17,7 @@ public class DividendEventRequestDTO {
     private String ticker;
     private String account;
     private Integer shares;
+    private Integer taxRuleId;
     private BigDecimal dividendPerShare;
     private BigDecimal amount;
     private String currency;
