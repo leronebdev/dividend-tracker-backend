@@ -19,7 +19,7 @@ application:
   name: Dividend-Tracker-Server
 
 cors:
-  allowed-origins: "http://localhost:5173"
+  allowed-origins: "http://merciful:8080, http://192.168.1.177:8080"
 
 dividend-tracker:
   fx:

@@ -16,8 +16,8 @@ application:
   name: Dividend-Tracker-Server
 
 cors:
-  allowed-origins: "http://merciful:8080"
+  allowed-origins: "http://merciful:8080, http://192.168.1.177:8080"
   
-  dividend-tracker:
-    fx:
-      api-url: "https://api.frankfurter.app"
+dividend-tracker:
+  fx:
+    api-url: "https://api.frankfurter.app"
