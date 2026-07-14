@@ -10,6 +10,7 @@ import com.serverside.dt.entities.DividendEvent;
 public interface DividendEventRepository extends JpaRepository<DividendEvent, UUID> {
 
     List<DividendEvent> findByAccountId(UUID accountId);
+    List<DividendEvent>findByStockIdAndAccountId(UUID stockId, UUID accountId);
 
     List<DividendEvent> findByStockId(UUID stockId);
     List<DividendEvent> findAll();
