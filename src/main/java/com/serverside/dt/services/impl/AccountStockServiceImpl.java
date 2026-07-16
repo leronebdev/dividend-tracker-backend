@@ -278,11 +278,11 @@ public class AccountStockServiceImpl implements AccountStockService {
     	Account account = accountRepository.findByAccountNumber(accountNumber)
                  .orElseThrow(() -> new IllegalArgumentException("Account not found: " + accountNumber));
     	
-    	StockDividendDetails details = stockDividendDetailsRepository
-                .findTopByStockIdOrderByLastUpdatedDateDesc(stockId)
-                .orElseThrow(() -> new IllegalArgumentException("Dividend details not found for stock: " + stockIdStr));
+//    	StockDividendDetails details = stockDividendDetailsRepository
+//                .findTopByStockIdOrderByLastUpdatedDateDesc(stockId)
+//                .orElseThrow(() -> new IllegalArgumentException("Dividend details not found for stock: " + stockIdStr));
         // 1. Delete all dividend events for this stock
-        dividendEventRepository.deleteByStockIdAndStockDividendDetailIdAndAccountId(stockId, details.getId(), account.getId());
+        dividendEventRepository.deleteByStockIdAndAccountId(stockId,account.getId());
 
         // 2. Delete all account-stock relationships
         accountStockRepository.deleteByStockIdAndAccountId(stockId, account.getId());

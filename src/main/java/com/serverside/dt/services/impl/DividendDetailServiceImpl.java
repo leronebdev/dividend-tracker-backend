@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.serverside.dt.dtos.DividendDetailTO;
 import com.serverside.dt.entities.Account;
@@ -100,16 +101,6 @@ public class DividendDetailServiceImpl implements DividendDetailService {
 		
 	}
 
-
-
-	@Override
-	public void delete(String id) {
-		// TODO Auto-generated method stub
-		
-	}
-
-
-
 	@Override
 	public Map<String, List<DividendDetailTO>> getAllDividendDetails(String accountNumber, String strStockId) {
 		
@@ -181,6 +172,42 @@ public class DividendDetailServiceImpl implements DividendDetailService {
          results.put("Upcoming", upcoming);
          results.put("Past",past);
          return results;
+		
+	}
+
+	@Override
+	@Transactional
+	public void delete(String id, String stockId, String accountNumber) {
+		
+		UUID dividendDetailsId = UUID.fromString(id);
+		Account account = accountRepo.findByAccountNumber(accountNumber)
+                .orElseThrow(() -> new IllegalStateException("Account not found: " + accountNumber));		
+		dividendEventRepo.deleteByStockIdAndStockDividendDetailIdAndAccountId(UUID.fromString(stockId), dividendDetailsId, account.getId());
+		stockDividendDetailsRepo.deleteById(dividendDetailsId);
+		
+	}
+
+	@Override
+	@Transactional
+	public void update(DividendDetailTO detailTO) {
+		UUID dividendDetailsId = UUID.fromString(detailTO.getDividendDetailId());
+		UUID stockId = UUID.fromString(detailTO.getStockId());
+		StockDividendDetails detail = stockDividendDetailsRepo.findById(dividendDetailsId)
+				.orElseThrow(()->new IllegalStateException("Dividend detail not found: " + dividendDetailsId));
+		Account account = accountRepo.findByAccountNumber(detailTO.getAccountNumber())
+                .orElseThrow(() -> new IllegalStateException("Account not found: " + detailTO.getAccountNumber()));	
+		detail.setDividendPerShare(detailTO.getDividendPerShare());
+		detail.setExDate(detailTO.getExDate());
+		detail.setPayoutDate(detailTO.getPayoutDate());
+		detail.setLastUpdatedDate(LocalDateTime.now());
+		List<DividendEvent>relevantDividendEvents = dividendEventRepo.findByStockIdAndAccountId(stockId, account.getId());
+		relevantDividendEvents = relevantDividendEvents.stream().filter(event->event.getStockDividendDetailId().equals(dividendDetailsId)).collect(Collectors.toList());
+		if (relevantDividendEvents.size() > 0) {
+			DividendEvent relevantEvent = relevantDividendEvents.get(0);
+			relevantEvent.setSharesAtEvent(detailTO.getEligibleShares());
+			dividendEventRepo.save(relevantEvent);
+		}
+		stockDividendDetailsRepo.save(detail);
 		
 	}
    

@@ -8,8 +8,10 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.serverside.dt.dtos.DividendDetailTO;
@@ -32,6 +34,11 @@ public class DividendDetailController {
 	public ResponseEntity<DividendDetailTO> create(@RequestBody DividendDetailTO detail) {
 		return ResponseEntity.ok(service.create(detail));
 	}
+	@PutMapping("/update")
+	public ResponseEntity<Void> update(@RequestBody DividendDetailTO detail) {
+		service.update(detail);
+		return ResponseEntity.noContent().build();
+	}
 
 	@GetMapping("/stock/{stockId}/account/{accountNumber}")
 	public ResponseEntity<Map<String, List<DividendDetailTO>>> getAllDividendDetails(
@@ -41,10 +48,10 @@ public class DividendDetailController {
 
 	// ----------------------------------------------------
 	// DELETE ONE DETAIL
-	// ----------------------------------------------------
-	@DeleteMapping("/{id}")
-	public ResponseEntity<Void> delete(@PathVariable String id) {
-		service.delete(id);
+	// ----------------------------------------------------("stockId")
+	@DeleteMapping("/dividendDetailId/{dividendDetailId}")
+	public ResponseEntity<Void> delete(@PathVariable("dividendDetailId") String id,@RequestParam("stockId") String stockId, @RequestParam("accountNumber") String accountNumber) {
+		service.delete(id,stockId,accountNumber);
 		return ResponseEntity.noContent().build();
 	}
 }
