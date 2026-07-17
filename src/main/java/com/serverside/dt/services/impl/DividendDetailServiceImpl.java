@@ -94,7 +94,16 @@ public class DividendDetailServiceImpl implements DividendDetailService {
 			                    .lastUpdatedDate(LocalDateTime.now())
 			                    .build();
 			        }
-		 StockDividendDetails dets = stockDividendDetailsRepo.save(details);
+			        StockDividendDetails dets = null;
+					if (!stockDividendDetailsRepo.existsByStockIdAndPayoutDate(stockId, detailTO.getPayoutDate())) {
+						
+							dets = stockDividendDetailsRepo.save(details);
+					}
+					else
+					{
+						dets = stockDividendDetailsRepo.findByStockIdAndPayoutDate(stockId, detailTO.getPayoutDate());
+								
+					}
 		 eventPublisher.publishEvent(new PayoutDateAddedEvent(stockDividendDetailsMapper.toDto(dets)));
 		 detailTO.setDividendDetailId(dets.getId().toString());
 		 return detailTO;

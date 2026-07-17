@@ -273,10 +273,9 @@ public class DividendEventServiceImpl implements DividendEventService {
 		UUID stockIdUUID = UUID.fromString(stockId);
    	 // 1. Find the StockDividendDetails row
        StockDividendDetails detail = stockDividendDetailsRepo
-               .findByStockIdAndPayoutDate(stockIdUUID, payoutDate)
-               .orElseThrow(() -> new IllegalStateException(
-                       "No StockDividendDetails found for stockId=" + stockId + " and payoutDate=" + payoutDate
-               ));
+               .findByStockIdAndPayoutDate(stockIdUUID, payoutDate);
+               if(detail == null) throw new IllegalArgumentException(
+                       "No StockDividendDetails found for stockId=" + stockId + " and payoutDate=" + payoutDate);
 
        // ⭐ 2. Delete ALL DividendEvents tied to this payout (NOT just one account)
        dividendEventRepository.deleteByStockDividendDetailId(detail.getId());

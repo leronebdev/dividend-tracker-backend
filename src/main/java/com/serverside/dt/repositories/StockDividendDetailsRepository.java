@@ -13,9 +13,11 @@ public interface StockDividendDetailsRepository extends JpaRepository<StockDivid
 
     Optional<List<StockDividendDetails>> findByStockId(UUID stockId);
     Optional<StockDividendDetails> findTopByStockIdOrderByExDateDesc(UUID stockId);
+    Optional<StockDividendDetails> findTopByStockIdAndExDateOrderByExDateDesc(UUID stockId, LocalDate exDate);
+    boolean existsByStockIdAndPayoutDate(UUID stockId, LocalDate payoutDate);
     boolean existsByStockId(UUID stockId);
     void deleteByStockId(UUID stockId);
-    Optional<StockDividendDetails> findByStockIdAndPayoutDate(UUID stockId, LocalDate payoutDate);
+    StockDividendDetails findByStockIdAndPayoutDate(UUID stockId, LocalDate payoutDate);
     Optional<StockDividendDetails> findTopByStockIdOrderByLastUpdatedDateDesc(UUID stockId);
 
 }
