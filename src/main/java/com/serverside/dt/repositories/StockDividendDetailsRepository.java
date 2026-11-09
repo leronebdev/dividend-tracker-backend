@@ -1,5 +1,6 @@
 package com.serverside.dt.repositories;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -13,6 +14,7 @@ public interface StockDividendDetailsRepository extends JpaRepository<StockDivid
 
     Optional<List<StockDividendDetails>> findByStockId(UUID stockId);
     Optional<StockDividendDetails> findTopByStockIdOrderByExDateDesc(UUID stockId);
+    Optional<StockDividendDetails> findTopByStockIdAndExDateAndDividendPerShareOrderByExDateDesc(UUID stockId,LocalDate exDate, BigDecimal dividendPerShare);
     Optional<StockDividendDetails> findTopByStockIdAndExDateOrderByExDateDesc(UUID stockId, LocalDate exDate);
     boolean existsByStockIdAndPayoutDate(UUID stockId, LocalDate payoutDate);
     boolean existsByStockId(UUID stockId);

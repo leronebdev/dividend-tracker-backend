@@ -1,5 +1,6 @@
 package com.serverside.dt.services.impl;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.serverside.dt.dtos.DividendDetailTO;
+import com.serverside.dt.dtos.StockDividendDetailsDTO;
 import com.serverside.dt.entities.Account;
 import com.serverside.dt.entities.DividendEvent;
 import com.serverside.dt.entities.DividendFrequency;
@@ -218,6 +220,32 @@ public class DividendDetailServiceImpl implements DividendDetailService {
 		}
 		stockDividendDetailsRepo.save(detail);
 		
+	}
+
+	@Override
+	public StockDividendDetailsDTO getLatestDividendDetailsByStockId(UUID stockId) {
+		Optional<StockDividendDetails> sdd =  this.stockDividendDetailsRepo.findTopByStockIdOrderByExDateDesc(stockId);
+		if(sdd.isPresent())
+		{
+			StockDividendDetails dets = sdd.get();
+            return stockDividendDetailsMapper.toDto(dets);
+        }
+        else
+        {
+            throw new IllegalStateException("No dividend details found for stock: " + stockId);
+		}		
+	}
+
+	@Override
+	public Optional<StockDividendDetailsDTO> getDividendDetails(String stockId, LocalDate exDate, BigDecimal dividendPerShare) {
+		UUID stockUUID = UUID.fromString(stockId);
+		return this.stockDividendDetailsRepo
+        .findTopByStockIdAndExDateAndDividendPerShareOrderByExDateDesc(
+                stockUUID,
+                exDate,
+                dividendPerShare)
+        .map(stockDividendDetailsMapper::toDto);
+       
 	}
    
 
