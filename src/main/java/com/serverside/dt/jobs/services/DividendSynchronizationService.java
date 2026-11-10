@@ -1,6 +1,5 @@
 package com.serverside.dt.jobs.services;
 
-import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -9,9 +8,11 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.serverside.dt.dtos.DividendDetailTO;
 import com.serverside.dt.dtos.StockDTO;
 import com.serverside.dt.dtos.StockDividendDetailsDTO;
 import com.serverside.dt.events.PayoutDateAddedEvent;
+import com.serverside.dt.mappers.StockDividendDetailsMapper;
 import com.serverside.dt.providers.DividendDataProvider;
 import com.serverside.dt.records.DividendRecord;
 import com.serverside.dt.services.DividendDetailService;
@@ -29,7 +30,8 @@ public class DividendSynchronizationService {
 	private final StockService stockService;
 	private final DividendDetailService dividendDetailsService;
 	private final DividendDataProvider dividendDataProvider;
-	private final ApplicationEventPublisher applicationEventPublisher;
+	 private final ApplicationEventPublisher eventPublisher;
+	    private final StockDividendDetailsMapper stockDividendDetailsMapper;
 
 	public void synchronize() {
 
@@ -102,21 +104,32 @@ public class DividendSynchronizationService {
 	}
 
 	private void publishPayoutDateAddedEvent(StockDTO stock, DividendRecord dividend) {
+		
+		DividendDetailTO details = DividendDetailTO.builder()
+                 .stockId(stock.getId().toString())
+                 .dividendPerShare(dividend.dividendPerShare())
+                 .exDate(dividend.exDate())
+                 .payoutDate(dividend.paymentDate())                 
+                 .build();
+     
+     DividendDetailTO dets = dividendDetailsService.create(details);
+ 	eventPublisher.publishEvent(new PayoutDateAddedEvent(stockDividendDetailsMapper.fromTO(dets)));
 
-		StockDividendDetailsDTO dto = new StockDividendDetailsDTO();
-
-		dto.setStockId(stock.getId());
-
-		dto.setPayoutDate(dividend.paymentDate());
-
-		dto.setExDate(dividend.exDate());
-
-		dto.setDividendPerShare(dividend.dividendPerShare());
-
-		dto.setCreatedDate(LocalDateTime.now());
-
-		dto.setLastUpdatedDate(LocalDateTime.now());
-
-		applicationEventPublisher.publishEvent(new PayoutDateAddedEvent(dto));
+//
+//		StockDividendDetailsDTO dto = new StockDividendDetailsDTO();
+//
+//		dto.setStockId(stock.getId());
+//
+//		dto.setPayoutDate(dividend.paymentDate());
+//
+//		dto.setExDate(dividend.exDate());
+//
+//		dto.setDividendPerShare(dividend.dividendPerShare());
+//
+//		dto.setCreatedDate(LocalDateTime.now());
+//
+//		dto.setLastUpdatedDate(LocalDateTime.now());
+//
+//		applicationEventPublisher.publishEvent(new PayoutDateAddedEvent(dto));
 	}
 }

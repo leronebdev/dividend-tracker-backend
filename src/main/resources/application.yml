@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: dev
+    active: dev, wiremock
 
   datasource:
     url: jdbc:postgresql://merciful:5432/dividend_tracker
@@ -25,8 +25,9 @@ dividend-tracker:
   fx:
     api-url: "https://api.frankfurter.app"
   businessquant:
-    base-url: https://data.businessquant.com
+    base-url: http://localhost:8089
+      #https://data.businessquant.com
     api-key: 044a92df37d4871de99c2ef2dd59b99e
   jobs:
     dividend-sync:
-      cron: "*/5 * * * * *"
+      cron: "* */1 * * * *"

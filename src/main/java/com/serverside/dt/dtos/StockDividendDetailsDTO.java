@@ -5,9 +5,11 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import lombok.Builder;
 import lombok.Data;
 
 @Data
+@Builder
 public class StockDividendDetailsDTO {
 	private UUID id;
 	private UUID stockId;

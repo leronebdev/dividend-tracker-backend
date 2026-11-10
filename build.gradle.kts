@@ -23,6 +23,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-webmvc")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
    implementation("org.mapstruct:mapstruct:1.6.3")
+   implementation("org.wiremock:wiremock-standalone:3.13.1")
 annotationProcessor("org.mapstruct:mapstruct-processor:1.6.3")
 developmentOnly("org.springframework.boot:spring-boot-devtools")
 
