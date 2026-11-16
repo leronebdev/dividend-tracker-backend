@@ -15,6 +15,7 @@ public class StockDTO {
     private String ticker;
     private String companyName;
     private Integer sectorId;
+    private Integer payoutFrequency;
     private LocalDate exDate;
     private String currencyCode;
     private LocalDateTime createdDate;

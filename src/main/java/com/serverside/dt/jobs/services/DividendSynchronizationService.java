@@ -11,11 +11,13 @@ import org.springframework.transaction.annotation.Transactional;
 import com.serverside.dt.dtos.DividendDetailTO;
 import com.serverside.dt.dtos.StockDTO;
 import com.serverside.dt.dtos.StockDividendDetailsDTO;
+import com.serverside.dt.entities.DividendFrequency;
 import com.serverside.dt.events.PayoutDateAddedEvent;
 import com.serverside.dt.mappers.StockDividendDetailsMapper;
 import com.serverside.dt.providers.DividendDataProvider;
 import com.serverside.dt.records.DividendRecord;
 import com.serverside.dt.services.DividendDetailService;
+import com.serverside.dt.services.DividendFrequencyService;
 import com.serverside.dt.services.StockService;
 
 import lombok.RequiredArgsConstructor;
@@ -27,93 +29,95 @@ import lombok.extern.slf4j.Slf4j;
 @Transactional
 public class DividendSynchronizationService {
 
-	private final StockService stockService;
-	private final DividendDetailService dividendDetailsService;
-	private final DividendDataProvider dividendDataProvider;
-	 private final ApplicationEventPublisher eventPublisher;
-	    private final StockDividendDetailsMapper stockDividendDetailsMapper;
+    private final StockService stockService;
+    private final DividendDetailService dividendDetailsService;
+    private final DividendFrequencyService dividendFrequencyService;
+    private final DividendDataProvider dividendDataProvider;
+    private final ApplicationEventPublisher eventPublisher;
+    private final StockDividendDetailsMapper stockDividendDetailsMapper;
 
-	public void synchronize() {
+    public void synchronize() {
 
-		log.info("Starting dividend synchronization.");
+	log.info("Starting dividend synchronization.");
 
-		List<StockDTO> stocks = stockService.getAll();
+	List<StockDTO> stocks = stockService.getAll();
 
-		for (StockDTO stock : stocks) {
-			synchronizeStock(stock);
-		}
-
-		log.info("Dividend synchronization completed.");
+	for (StockDTO stock : stocks) {
+	    synchronizeStock(stock);
 	}
 
-	private void synchronizeStock(StockDTO stock) {
+	log.info("Dividend synchronization completed.");
+    }
 
-		try {
+    private void synchronizeStock(StockDTO stock) {
 
-			log.debug("Checking dividends for ticker [{}]", stock.getTicker());
+	try {
 
-			List<DividendRecord> dividends = dividendDataProvider.getDividends(stock.getTicker());
+	    log.debug("Checking dividends for ticker [{}]", stock.getTicker());
 
-			if (dividends.isEmpty()) {
+	    List<DividendRecord> dividends = dividendDataProvider.getDividends(stock.getTicker());
 
-				log.debug("No dividend data returned for ticker [{}]", stock.getTicker());
+	    if (dividends.isEmpty()) {
 
-				return;
-			}
+		log.debug("No dividend data returned for ticker [{}]", stock.getTicker());
 
-			DividendRecord latestApiDividend = dividends.stream().max(Comparator.comparing(DividendRecord::paymentDate))
-					.orElse(null);
+		return;
+	    }
 
-			if (latestApiDividend == null) {
-				return;
-			}
+	    DividendRecord latestApiDividend = dividends.stream().max(Comparator.comparing(DividendRecord::paymentDate))
+		    .orElse(null);
 
-			Optional<StockDividendDetailsDTO> latestStoredDividend =
-			        dividendDetailsService.getDividendDetails(
-			                stock.getId().toString(),
-			                latestApiDividend.exDate(),
-			                latestApiDividend.dividendPerShare());
+	    if (latestApiDividend == null) {
+		return;
+	    }
 
-			if (latestStoredDividend.isEmpty()) {
+	    Optional<StockDividendDetailsDTO> latestStoredDividend = dividendDetailsService.getDividendDetails(
+		    stock.getId().toString(), latestApiDividend.exDate(), latestApiDividend.dividendPerShare());
 
-			    log.info(
-			            "No existing dividend records found for ticker [{}]. Publishing initial event.",
-			            stock.getTicker());
+	    if (latestStoredDividend.isEmpty()) {
 
-			    publishPayoutDateAddedEvent(stock, latestApiDividend);
+		log.info("No existing dividend records found for ticker [{}]. Publishing initial event.",
+			stock.getTicker());
 
-			    return;
-			}
-			
-			if (isNewDividend(latestStoredDividend.get(), latestApiDividend)) {
+		publishPayoutDateAddedEvent(stock, latestApiDividend);
 
-				log.info("New dividend detected for ticker [{}].", stock.getTicker());
+		return;
+	    }
 
-				publishPayoutDateAddedEvent(stock, latestApiDividend);
-			}
+	    if (isNewDividend(latestStoredDividend.get(), latestApiDividend)) {
 
-		} catch (Exception ex) {
+		log.info("New dividend detected for ticker [{}].", stock.getTicker());
 
-			log.error("Error synchronizing dividends for ticker [{}]", stock.getTicker(), ex);
-		}
+		publishPayoutDateAddedEvent(stock, latestApiDividend);
+	    }
+
+	} catch (Exception ex) {
+
+	    log.error("Error synchronizing dividends for ticker [{}]", stock.getTicker(), ex);
+	}
+    }
+
+    private boolean isNewDividend(StockDividendDetailsDTO storedDividend, DividendRecord apiDividend) {
+
+	return apiDividend.paymentDate().isAfter(storedDividend.getPayoutDate());
+    }
+
+    private void publishPayoutDateAddedEvent(StockDTO stock, DividendRecord dividend) {
+
+	// We have the Frequency ID but we need the matching period:
+
+	Optional<DividendFrequency> frequency = dividendFrequencyService.getById(stock.getPayoutFrequency());
+	if (!frequency.isPresent()) {
+	    log.error("Failed, could not find frequency ID " + stock.getPayoutFrequency());
+	    return;
 	}
 
-	private boolean isNewDividend(StockDividendDetailsDTO storedDividend, DividendRecord apiDividend) {
+	DividendDetailTO details = DividendDetailTO.builder().stockId(stock.getId().toString())
+		.dividendPerShare(dividend.dividendPerShare()).exDate(dividend.exDate())
+		.frequency(frequency.get().getPeriodsPerYear()).payoutDate(dividend.paymentDate()).build();
 
-		return apiDividend.paymentDate().isAfter(storedDividend.getPayoutDate());
-	}
-
-	private void publishPayoutDateAddedEvent(StockDTO stock, DividendRecord dividend) {
-		
-		DividendDetailTO details = DividendDetailTO.builder()
-                 .stockId(stock.getId().toString())
-                 .dividendPerShare(dividend.dividendPerShare())
-                 .exDate(dividend.exDate())
-                 .payoutDate(dividend.paymentDate())                 
-                 .build();
-     
-     DividendDetailTO dets = dividendDetailsService.create(details);
- 	eventPublisher.publishEvent(new PayoutDateAddedEvent(stockDividendDetailsMapper.fromTO(dets)));
+	DividendDetailTO dets = dividendDetailsService.create(details);
+	eventPublisher.publishEvent(new PayoutDateAddedEvent(stockDividendDetailsMapper.fromTO(dets)));
 
 //
 //		StockDividendDetailsDTO dto = new StockDividendDetailsDTO();
@@ -131,5 +135,5 @@ public class DividendSynchronizationService {
 //		dto.setLastUpdatedDate(LocalDateTime.now());
 //
 //		applicationEventPublisher.publishEvent(new PayoutDateAddedEvent(dto));
-	}
+    }
 }

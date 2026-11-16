@@ -1,0 +1,38 @@
+{
+   "metadata":{
+      "cik":78003,
+      "ticker":"PFE",
+      "id_series":null,
+      "companyname":"Pfizer Inc",
+      "companyname_short":"Pfizer",
+      "range":"2004-2026",
+      "divyield":5.9515571719840406,
+      "lastdividend":"2026-09-01",
+      "nextdividend":"2026-12-07",
+      "ttmdividend":1.72,
+      "mode":"dps",
+      "note":"Free plan: dividend history is limited to the most recent 1 year. Upgrade to the Pro or Max plan to unlock the full dividend history: https://businessquant.com/pricing"
+   },
+   "data":[
+      {
+         "dividend":0.43,
+         "ex_date":"2026-11-06",
+         "payment_date":"2026-12-07"
+      },
+      {
+         "dividend":0.43,
+         "ex_date":"2026-07-24",
+         "payment_date":"2026-09-01"
+      },
+      {
+         "dividend":0.43,
+         "ex_date":"2026-05-08",
+         "payment_date":"2026-06-12"
+      },
+      {
+         "dividend":0.43,
+         "ex_date":"2026-01-23",
+         "payment_date":"2026-03-06"
+      }
+   ]
+}
