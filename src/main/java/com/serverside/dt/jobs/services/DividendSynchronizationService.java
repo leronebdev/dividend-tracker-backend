@@ -36,7 +36,7 @@ public class DividendSynchronizationService {
     private final ApplicationEventPublisher eventPublisher;
     private final StockDividendDetailsMapper stockDividendDetailsMapper;
 
-    public void synchronize() {
+    public synchronized void synchronize() {
 
 	log.info("Starting dividend synchronization.");
 
@@ -116,8 +116,8 @@ public class DividendSynchronizationService {
 		.dividendPerShare(dividend.dividendPerShare()).exDate(dividend.exDate())
 		.frequency(frequency.get().getPeriodsPerYear()).payoutDate(dividend.paymentDate()).build();
 
-	DividendDetailTO dets = dividendDetailsService.create(details);
-	eventPublisher.publishEvent(new PayoutDateAddedEvent(stockDividendDetailsMapper.fromTO(dets)));
+	DividendDetailTO dets = dividendDetailsService.create(details);	
+	//eventPublisher.publishEvent(new PayoutDateAddedEvent(stockDividendDetailsMapper.fromTO(dets)));
 
 //
 //		StockDividendDetailsDTO dto = new StockDividendDetailsDTO();

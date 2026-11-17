@@ -31,7 +31,7 @@ public class PayoutChangedListener {
 
     @EventListener
     @Transactional
-    public void handlePayoutAdded(PayoutDateAddedEvent event) {
+    public synchronized void handlePayoutAdded(PayoutDateAddedEvent event) {
 
         StockDividendDetailsDTO details = event.getDto();
 
@@ -63,9 +63,10 @@ public class PayoutChangedListener {
             List<DividendEventDTO> existingEvents =
                     dividendEventsService.getByAccount(accountId)
                             .stream()
+                            .filter(e->e.getStockDividendDetailId() !=null)
                             .filter(e ->
                                     e.getStockId().equals(stockId) &&
-                                    e.getStockDividendDetailId().equals(stockDividendDetailId)
+                                    stockDividendDetailId.equals(e.getStockDividendDetailId())
                             )
                             .toList();
 

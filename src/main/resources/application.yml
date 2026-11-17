@@ -3,7 +3,7 @@ spring:
     active: dev, wiremock
 
   datasource:
-    url: jdbc:postgresql://merciful:5432/dividend_tracker
+    url: jdbc:postgresql://merciful:5438/dividend_tracker_dev
     username: wise
     password: securepassword123
     driver-class-name: org.postgresql.Driver
