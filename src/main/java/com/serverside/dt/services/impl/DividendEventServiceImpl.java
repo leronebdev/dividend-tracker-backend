@@ -65,7 +65,7 @@ public class DividendEventServiceImpl implements DividendEventService {
 	}
 	@Override
 	public List<DividendEventDTO> getByAccountAndStockId(UUID accountId, UUID stockId) {
-		return dividendEventRepo.findByStockIdAndAccountId(accountId,stockId).stream().map(mapper::toDTO).toList();
+		return dividendEventRepo.findByStockIdAndAccountId(stockId,accountId).stream().map(mapper::toDTO).toList();
 	}
 
 	@Override

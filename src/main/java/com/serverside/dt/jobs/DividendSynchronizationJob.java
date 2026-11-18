@@ -3,9 +3,7 @@ package com.serverside.dt.jobs;
 
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-
-import com.serverside.dt.jobs.services.DividendSynchronizationService;
-
+import com.serverside.dt.jobs.services.DividendSynchronizationOrchestrator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -14,7 +12,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class DividendSynchronizationJob {
 
-    private final DividendSynchronizationService synchronizationService;
+    //private final DividendSynchronizationService synchronizationService;
+    private final DividendSynchronizationOrchestrator synchronizationService;
 
     @Scheduled(cron = "${dividend-tracker.jobs.dividend-sync.cron}")
     public void execute() {

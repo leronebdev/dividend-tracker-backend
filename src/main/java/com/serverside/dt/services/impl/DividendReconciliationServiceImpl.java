@@ -1,9 +1,8 @@
 package com.serverside.dt.services.impl;
 
+import java.time.LocalDate;
 import java.util.List;
-
 import org.springframework.stereotype.Service;
-
 import com.serverside.dt.dtos.AccountStockDTO;
 import com.serverside.dt.dtos.StockDividendDetailsDTO;
 import com.serverside.dt.records.DividendRecord;
@@ -16,11 +15,21 @@ public class DividendReconciliationServiceImpl implements DividendReconciliation
 	public List<DividendRecord> reconcile(AccountStockDTO accountStock,
 			List<StockDividendDetailsDTO> dividendDetailsForAccountStock, List<DividendRecord> apiDividends) {
 
-		return apiDividends.stream()
-				.filter(apiDividend -> apiDividend.exDate().isAfter(accountStock.getPurchasedDate()))
-				.filter(apiDividend -> dividendDetailsForAccountStock.stream()
-						.noneMatch(existingDetail -> existingDetail.getExDate().equals(apiDividend.exDate())
-								&& existingDetail.getDividendPerShare().compareTo(apiDividend.dividendPerShare()) == 0))
-				.toList();
+	    LocalDate purchasedDate = accountStock.getPurchasedDate();
+
+	    if (purchasedDate == null) {
+	        return List.of();
+	    }
+
+	    return apiDividends.stream()
+	            .filter(dividend ->
+	                    dividend.exDate().isAfter(purchasedDate))
+	            .filter(dividend ->
+	                    dividendDetailsForAccountStock.stream()
+	                            .noneMatch(existingDetail ->
+	                                    existingDetail.getExDate().equals(dividend.exDate())
+	                                    && existingDetail.getDividendPerShare()
+	                                            .compareTo(dividend.dividendPerShare()) == 0))
+	            .toList();
 	}	
 }

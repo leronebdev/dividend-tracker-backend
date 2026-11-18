@@ -252,7 +252,7 @@ public class AccountStockServiceImpl implements AccountStockService {
 
         accountStock.setShares(dto.getShares());
         accountStock.setAveragePrice(dto.getAvgCost());
-        accountStock.setPurchasedDate(dto.getPurchaseDate() != null ? LocalDate.parse(dto.getPurchaseDate()) : null);
+        accountStock.setPurchasedDate(dto.getPurchaseDate() != null ? LocalDate.parse(dto.getPurchaseDate()) : accountStock.getPurchasedDate());
         accountStock.setSoldDate(dto.getSoldDate() != null && !dto.getSoldDate().equals("") ? LocalDate.parse(dto.getSoldDate()) : null);
         accountStock.setLastUpdatedDate(LocalDateTime.now());
 

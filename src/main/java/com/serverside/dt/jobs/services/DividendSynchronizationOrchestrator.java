@@ -1,18 +1,19 @@
 package com.serverside.dt.jobs.services;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import com.serverside.dt.dtos.AccountDTO;
 import com.serverside.dt.dtos.AccountStockDTO;
+import com.serverside.dt.dtos.DividendDetailTO;
 import com.serverside.dt.dtos.DividendEventDTO;
 import com.serverside.dt.dtos.StockDTO;
+import com.serverside.dt.entities.DividendFrequency;
 import com.serverside.dt.events.DividendDiscoveredEvent;
 import com.serverside.dt.providers.DividendDataProvider;
 import com.serverside.dt.records.DividendRecord;
@@ -20,9 +21,9 @@ import com.serverside.dt.services.AccountService;
 import com.serverside.dt.services.AccountStockService;
 import com.serverside.dt.services.DividendDetailService;
 import com.serverside.dt.services.DividendEventService;
+import com.serverside.dt.services.DividendFrequencyService;
 import com.serverside.dt.services.DividendReconciliationService;
 import com.serverside.dt.services.StockService;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -36,8 +37,9 @@ public class DividendSynchronizationOrchestrator {
 	private final StockService stockService;
 	private final DividendDataProvider dividendDataProvider;
 	private final DividendReconciliationService dividendReconciliationService;
-	DividendEventService dividendEventService;
+	private final DividendEventService dividendEventService;
 	private final DividendDetailService dividendDetailService;
+	private final DividendFrequencyService dividendFrequencyService;
 	private final AccountService accountService;
 	private final ApplicationEventPublisher eventPublisher;
 
@@ -53,9 +55,16 @@ public class DividendSynchronizationOrchestrator {
 	private void synchronize(AccountStockDTO accountStock) {
 		StockDTO stock = new StockDTO();
 		try {
-			 stock = stockService.getById(accountStock.getId());
-			AccountDTO account = accountService.getById(accountStock.getId());
-
+			 stock = stockService.getById(accountStock.getStockId());
+			 final UUID stockId = stock.getId();
+			AccountDTO account = accountService.getById(accountStock.getAccountId());
+			Optional<DividendFrequency> frequency = dividendFrequencyService.getById(stock.getPayoutFrequency());
+			if (!frequency.isPresent())
+			{
+			    log.error("Failed, could not find frequency ID " + stock.getPayoutFrequency());
+			    return;
+			}
+			
 			Set<UUID> dividendDetailIds = dividendEventService
 					.getByAccountAndStockId(account.getId(), stock.getId()).stream().map(DividendEventDTO::getStockDividendDetailId).distinct().collect(Collectors.toSet());
 
@@ -68,9 +77,15 @@ public class DividendSynchronizationOrchestrator {
 			List<DividendRecord> missingDividends = dividendReconciliationService.reconcile(accountStock,
 					dividendDetails, dividendsFromAPI);
 
+			
 			missingDividends.forEach(
-					dividend -> eventPublisher.publishEvent(new DividendDiscoveredEvent(accountStock.getStockId(),
-							dividend.exDate(), dividend.paymentDate(), dividend.dividendPerShare())));
+				
+					dividend -> {
+					    dividendDetailService.create(
+					    DividendDetailTO.builder().stockId(stockId.toString()).dividendPerShare(dividend.dividendPerShare()).exDate(dividend.exDate())
+					    .frequency(frequency.get().getPeriodsPerYear()).payoutDate(dividend.paymentDate()).build());
+					});
+					
 
 		} catch (Exception ex) {
 

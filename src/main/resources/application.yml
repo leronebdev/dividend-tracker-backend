@@ -30,4 +30,4 @@ dividend-tracker:
     api-key: 044a92df37d4871de99c2ef2dd59b99e
   jobs:
     dividend-sync:
-      cron: "* */1 * * * *"
+      cron: "0 */1 * * * *"
