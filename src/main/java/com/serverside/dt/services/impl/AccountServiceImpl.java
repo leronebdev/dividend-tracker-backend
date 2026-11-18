@@ -1,4 +1,4 @@
-package com.serverside.dt.services;
+package com.serverside.dt.services.impl;
 
 import com.serverside.dt.dtos.AccountDTO;
 import com.serverside.dt.entities.Account;
@@ -6,6 +6,7 @@ import com.serverside.dt.entities.AccountType;
 import com.serverside.dt.mappers.AccountMapper;
 import com.serverside.dt.repositories.AccountRepository;
 import com.serverside.dt.repositories.AccountTypeRepository;
+import com.serverside.dt.services.AccountService;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

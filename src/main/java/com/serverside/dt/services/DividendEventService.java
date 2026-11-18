@@ -16,6 +16,7 @@ public interface DividendEventService {
     DividendEventDTO getById(UUID id);
 
     List<DividendEventDTO> getByAccount(UUID accountId);
+    List<DividendEventDTO> getByAccountAndStockId(UUID accountId, UUID stockId);
 
     List<DividendEventDTO> getByStock(UUID stockId);
 

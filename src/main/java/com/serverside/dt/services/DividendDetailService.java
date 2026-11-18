@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 import com.serverside.dt.dtos.DividendDetailTO;
@@ -14,6 +15,8 @@ public interface DividendDetailService {
 
 	DividendDetailTO create(DividendDetailTO detail);
 	StockDividendDetailsDTO getLatestDividendDetailsByStockId(UUID stockId);
+	List<StockDividendDetailsDTO> getAllDividendDetailsByStockId(UUID stockId);
+	List<StockDividendDetailsDTO> getAllDividendDetailsByIds(Set<UUID> ids);
 	Optional<StockDividendDetailsDTO> getDividendDetails(String stockId, LocalDate exDate, BigDecimal dividendPerShare);
 	void update(DividendDetailTO detail);
 	Map<String,List<DividendDetailTO>> getAllDividendDetails(String accountNumber, String stockId);

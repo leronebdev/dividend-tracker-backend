@@ -96,6 +96,12 @@ public class DividendDetailServiceImpl implements DividendDetailService {
 	}
 
 	@Override
+	public List<StockDividendDetailsDTO> getAllDividendDetailsByIds(Set<UUID> ids) {
+		return stockDividendDetailsRepo.findAllById(ids).stream().map(stockDividendDetailsMapper::toDto)
+				.collect(Collectors.toList());
+	}
+
+	@Override
 	public Map<String, List<DividendDetailTO>> getAllDividendDetails(String accountNumber, String strStockId) {
 
 		Map<String, List<DividendDetailTO>> results = new HashMap<>();
@@ -212,6 +218,12 @@ public class DividendDetailServiceImpl implements DividendDetailService {
 				.findTopByStockIdAndExDateAndDividendPerShareOrderByExDateDesc(stockUUID, exDate, dividendPerShare)
 				.map(stockDividendDetailsMapper::toDto);
 
+	}
+
+	@Override
+	public List<StockDividendDetailsDTO> getAllDividendDetailsByStockId(UUID stockId) {
+		return stockDividendDetailsRepo.findByStockId(stockId).orElseGet(ArrayList::new).stream()
+				.map(stockDividendDetailsMapper::toDto).collect(Collectors.toList());
 	}
 
 }
