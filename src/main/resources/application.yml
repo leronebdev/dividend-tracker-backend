@@ -25,9 +25,13 @@ dividend-tracker:
   fx:
     api-url: "https://api.frankfurter.app"
   businessquant:
-    base-url: http://localhost:8089
+    base-url: https://data.businessquant.com 
+    #//http://localhost:8089
       #https://data.businessquant.com
     api-key: 044a92df37d4871de99c2ef2dd59b99e
+  finnhub:
+    base-url: https://finnhub.io/api/v1
+    api-key: dbv15l1r01qrflsn653gdbv15l1r01qrflsn6540
   jobs:
     dividend-sync:
-      cron: "0 */1 * * * *"
+      cron: "0 0 */6 * * *"

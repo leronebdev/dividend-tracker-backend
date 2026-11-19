@@ -21,7 +21,9 @@ public class BusinessQuantClient {
 
         log.debug("Retrieving dividend information for ticker {}", ticker);
 
-        return restClient.get()
+        try
+        {
+        BusinessQuantDividendResponse result = restClient.get()
                 .uri(uriBuilder -> uriBuilder                                                
                         .path("/dividends")
                         .queryParam("ticker", ticker)
@@ -30,5 +32,12 @@ public class BusinessQuantClient {
                         .build())
                 .retrieve()
                 .body(BusinessQuantDividendResponse.class);
+        return result;
+        }
+        catch(Exception e)
+        {
+        	log.error("Failed to retrieve dividend information for ticker {}: {}", ticker, e.getMessage());
+        	return null;
+        }
     }
 }

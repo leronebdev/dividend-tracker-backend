@@ -12,6 +12,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.serverside.dt.clients.FinnhubClient;
 import com.serverside.dt.commands.CalculateTaxCommand;
 import com.serverside.dt.dtos.AccountStockDTO;
 import com.serverside.dt.dtos.StockAccountProjectionDTO;
@@ -52,6 +53,7 @@ public class AccountStockServiceImpl implements AccountStockService {
 	private final DividendFrequencyRepository dividendFrequencyRepository;
 	private final DividendEventRepository dividendEventRepository;	
 	private final StockAccountViewCustomRepository stockAccountViewCustomRepository;
+	private final FinnhubClient finnhubClient;
 	@Autowired
 	private ApplicationEventPublisher accountStockPublisher;
 
@@ -265,7 +267,12 @@ public class AccountStockServiceImpl implements AccountStockService {
 			BigDecimal dividendYield = calculateDividendYield(result);
 			result.setDividendYield(dividendYield);
     	});
-    	results.stream().forEach(result -> calculateTax.calculate(result.getAccount(), result));
+    	results.stream().forEach(result -> {
+    		calculateTax.calculate(result.getAccount(), result);
+    		result.setCurrentPrice(
+    	            finnhubClient.getCurrentPrice(result.getTicker()));
+    	});
+    	
     	return results;
     }
 

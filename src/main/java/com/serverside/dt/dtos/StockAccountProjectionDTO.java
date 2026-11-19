@@ -18,6 +18,7 @@ public class StockAccountProjectionDTO implements ICalculatableDividend{
     private String account;
     private String currency;
     private BigDecimal amount;
+    private BigDecimal currentPrice;
 
     private BigDecimal shares;
     private BigDecimal avgCost;

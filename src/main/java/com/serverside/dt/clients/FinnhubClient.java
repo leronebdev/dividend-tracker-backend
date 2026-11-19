@@ -1,6 +1,8 @@
-package com.serverside.dt.providers;
+package com.serverside.dt.clients;
+
 import java.math.BigDecimal;
-public interface FinnhubClient
-{
+
+public interface FinnhubClient {
+
     BigDecimal getCurrentPrice(String ticker);
 }
