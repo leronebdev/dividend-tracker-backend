@@ -1,11 +1,10 @@
 package com.serverside.dt.clients;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
-
 import com.serverside.dt.config.BusinessQuantProperties;
 import com.serverside.dt.records.BusinessQuantDividendResponse;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -14,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class BusinessQuantClient {
 
+    @Qualifier("businessQuantClient")
     private final RestClient restClient;
     private final BusinessQuantProperties businessQuantProps;
 
