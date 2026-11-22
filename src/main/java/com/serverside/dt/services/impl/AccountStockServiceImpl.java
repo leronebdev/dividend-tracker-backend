@@ -12,6 +12,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.serverside.dt.clients.AlphaVantageClient;
 import com.serverside.dt.clients.FinnhubClient;
 import com.serverside.dt.commands.CalculateTaxCommand;
 import com.serverside.dt.dtos.AccountStockDTO;
@@ -54,6 +55,7 @@ public class AccountStockServiceImpl implements AccountStockService {
 	private final DividendEventRepository dividendEventRepository;	
 	private final StockAccountViewCustomRepository stockAccountViewCustomRepository;
 	private final FinnhubClient finnhubClient;
+	private final AlphaVantageClient alphaVantageClient;
 	@Autowired
 	private ApplicationEventPublisher accountStockPublisher;
 
@@ -269,8 +271,11 @@ public class AccountStockServiceImpl implements AccountStockService {
     	});
     	results.stream().forEach(result -> {
     		calculateTax.calculate(result.getAccount(), result);
-    		result.setCurrentPrice(
-    	            finnhubClient.getCurrentPrice(result.getTicker()));
+    		BigDecimal currentPrice = finnhubClient.getCurrentPrice(result.getTicker());
+			if (currentPrice.compareTo(BigDecimal.ZERO) == 0) {
+				currentPrice = alphaVantageClient.getCurrentPrice(result.getTicker());
+			}
+    		result.setCurrentPrice(currentPrice);
     	});
     	
     	return results;

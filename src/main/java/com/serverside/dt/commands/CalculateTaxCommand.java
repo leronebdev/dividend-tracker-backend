@@ -22,6 +22,11 @@ public class CalculateTaxCommand implements ICalculateCommand {
 		Account account = accountService.getEntityByAccountNumber(accountNumber);
 		AccountType accountType = account.getAccountType();
 		TaxRule taxRule = accountType.getTaxRule();
+		if(calculatableDividend.getDividendPerShare() == null)
+		{
+			calculatableDividend.setAmount(BigDecimal.ZERO);
+			return;
+		}
 		BigDecimal afterTaxAmount = calculatableDividend.getDividendPerShare().multiply(calculatableDividend.getShares());
 		
 		if(Currency.isValid(calculatableDividend.getCurrency()) && Currency.USD == Currency.from(calculatableDividend.getCurrency()))

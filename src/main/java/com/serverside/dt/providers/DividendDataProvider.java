@@ -7,5 +7,6 @@ import com.serverside.dt.records.DividendRecord;
 public interface DividendDataProvider {
 
     List<DividendRecord> getDividends(String ticker);
+    boolean supports(String ticker);
 
 }

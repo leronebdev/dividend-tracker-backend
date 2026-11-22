@@ -1,10 +1,12 @@
 package com.serverside.dt.config;
 
 import java.time.Duration;
+import java.util.List;
 
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
-import org.springframework.cache.caffeine.CaffeineCacheManager;
+import org.springframework.cache.caffeine.CaffeineCache;
+import org.springframework.cache.support.SimpleCacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -13,20 +15,24 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 @Configuration
 @EnableCaching
 public class CacheConfig {
-	
+
 	@Bean
-    public CacheManager cacheManager() {
+	public CacheManager cacheManager() {
 
-        CaffeineCacheManager manager =
-                new CaffeineCacheManager();
+		SimpleCacheManager cacheManager = new SimpleCacheManager();
 
-        manager.setCaffeine(
-                Caffeine.newBuilder()
-                        .expireAfterWrite(
-                                Duration.ofMinutes(15))
-                        .maximumSize(1000));
+		cacheManager.setCaches(List.of(
 
-        return manager;
-    }
+				new CaffeineCache("dividendHistory",
+						Caffeine.newBuilder().expireAfterWrite(Duration.ofHours(24)).maximumSize(1000).build()),
 
+				new CaffeineCache("stockPrices",
+						Caffeine.newBuilder().expireAfterWrite(Duration.ofMinutes(15)).maximumSize(1000).build()),
+
+				new CaffeineCache(
+						"exchangeRates",
+						Caffeine.newBuilder().expireAfterWrite(Duration.ofHours(24)).maximumSize(100).build())));
+
+		return cacheManager;
+	}
 }

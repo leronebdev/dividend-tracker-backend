@@ -1,0 +1,352 @@
+[
+    {
+        "date": "2024-01-26",
+        "declarationDate": "2024-01-18",
+        "recordDate": "2024-01-29",
+        "paymentDate": "2024-02-07",
+        "period": "Monthly",
+        "value": 0.0712,
+        "unadjustedValue": 0.0712,
+        "currency": "CAD"
+    },
+    {
+        "date": "2024-02-26",
+        "declarationDate": "2024-02-16",
+        "recordDate": "2024-02-27",
+        "paymentDate": "2024-03-07",
+        "period": "Monthly",
+        "value": 0.0712,
+        "unadjustedValue": 0.0712,
+        "currency": "CAD"
+    },
+    {
+        "date": "2024-03-25",
+        "declarationDate": "2024-03-15",
+        "recordDate": "2024-03-26",
+        "paymentDate": "2024-04-05",
+        "period": "Monthly",
+        "value": 0.0712,
+        "unadjustedValue": 0.0712,
+        "currency": "CAD"
+    },
+    {
+        "date": "2024-04-25",
+        "declarationDate": "2024-04-17",
+        "recordDate": "2024-04-26",
+        "paymentDate": "2024-05-07",
+        "period": "Monthly",
+        "value": 0.0712,
+        "unadjustedValue": 0.0712,
+        "currency": "CAD"
+    },
+    {
+        "date": "2024-05-29",
+        "declarationDate": "2024-05-21",
+        "recordDate": "2024-05-29",
+        "paymentDate": "2024-06-04",
+        "period": "Monthly",
+        "value": 0.0712,
+        "unadjustedValue": 0.0712,
+        "currency": "CAD"
+    },
+    {
+        "date": "2024-06-26",
+        "declarationDate": "2024-06-18",
+        "recordDate": "2024-06-26",
+        "paymentDate": "2024-07-03",
+        "period": "Monthly",
+        "value": 0.0712,
+        "unadjustedValue": 0.0712,
+        "currency": "CAD"
+    },
+    {
+        "date": "2024-07-29",
+        "declarationDate": "2024-07-19",
+        "recordDate": "2024-07-29",
+        "paymentDate": "2024-08-02",
+        "period": "Monthly",
+        "value": 0.084,
+        "unadjustedValue": 0.084,
+        "currency": "CAD"
+    },
+    {
+        "date": "2024-08-28",
+        "declarationDate": "2024-08-19",
+        "recordDate": "2024-08-28",
+        "paymentDate": "2024-09-04",
+        "period": "Monthly",
+        "value": 0.084,
+        "unadjustedValue": 0.084,
+        "currency": "CAD"
+    },
+    {
+        "date": "2024-09-26",
+        "declarationDate": "2024-09-17",
+        "recordDate": "2024-09-26",
+        "paymentDate": "2024-10-02",
+        "period": "Monthly",
+        "value": 0.084,
+        "unadjustedValue": 0.084,
+        "currency": "CAD"
+    },
+    {
+        "date": "2024-10-29",
+        "declarationDate": "2024-10-21",
+        "recordDate": "2024-10-29",
+        "paymentDate": "2024-11-04",
+        "period": "Monthly",
+        "value": 0.084,
+        "unadjustedValue": 0.084,
+        "currency": "CAD"
+    },
+    {
+        "date": "2024-11-27",
+        "declarationDate": "2024-11-18",
+        "recordDate": "2024-11-27",
+        "paymentDate": "2024-12-03",
+        "period": "Monthly",
+        "value": 0.084,
+        "unadjustedValue": 0.084,
+        "currency": "CAD"
+    },
+    {
+        "date": "2024-12-27",
+        "declarationDate": "2024-12-17",
+        "recordDate": "2024-12-27",
+        "paymentDate": "2025-01-06",
+        "period": "Monthly",
+        "value": 0.084,
+        "unadjustedValue": 0.084,
+        "currency": "CAD"
+    },
+    {
+        "date": "2025-01-29",
+        "declarationDate": "2025-01-20",
+        "recordDate": "2025-01-29",
+        "paymentDate": "2025-02-04",
+        "period": "Monthly",
+        "value": 0.084,
+        "unadjustedValue": 0.084,
+        "currency": "CAD"
+    },
+    {
+        "date": "2025-02-26",
+        "declarationDate": "2025-02-18",
+        "recordDate": "2025-02-26",
+        "paymentDate": "2025-03-04",
+        "period": "Monthly",
+        "value": 0.084,
+        "unadjustedValue": 0.084,
+        "currency": "CAD"
+    },
+    {
+        "date": "2025-03-27",
+        "declarationDate": "2025-03-18",
+        "recordDate": "2025-03-27",
+        "paymentDate": "2025-04-02",
+        "period": "Monthly",
+        "value": 0.084,
+        "unadjustedValue": 0.084,
+        "currency": "CAD"
+    },
+    {
+        "date": "2025-04-28",
+        "declarationDate": "2025-04-17",
+        "recordDate": "2025-04-28",
+        "paymentDate": "2025-05-02",
+        "period": "Monthly",
+        "value": 0.084,
+        "unadjustedValue": 0.084,
+        "currency": "CAD"
+    },
+    {
+        "date": "2025-06-03",
+        "declarationDate": "2025-05-28",
+        "recordDate": "2025-06-03",
+        "paymentDate": "2025-06-06",
+        "period": "Monthly",
+        "value": 0.084,
+        "unadjustedValue": 0.084,
+        "currency": "CAD"
+    },
+    {
+        "date": "2025-06-26",
+        "declarationDate": "2025-06-17",
+        "recordDate": "2025-06-26",
+        "paymentDate": "2025-07-03",
+        "period": "Monthly",
+        "value": 0.0866,
+        "unadjustedValue": 0.0866,
+        "currency": "CAD"
+    },
+    {
+        "date": "2025-07-29",
+        "declarationDate": "2025-07-18",
+        "recordDate": "2025-07-29",
+        "paymentDate": "2025-08-05",
+        "period": "Monthly",
+        "value": 0.0866,
+        "unadjustedValue": 0.0866,
+        "currency": "CAD"
+    },
+    {
+        "date": "2025-08-27",
+        "declarationDate": "2025-08-18",
+        "recordDate": "2025-08-27",
+        "paymentDate": "2025-09-03",
+        "period": "Monthly",
+        "value": 0.0866,
+        "unadjustedValue": 0.0866,
+        "currency": "CAD"
+    },
+    {
+        "date": "2025-09-25",
+        "declarationDate": "2025-09-17",
+        "recordDate": "2025-09-25",
+        "paymentDate": "2025-10-02",
+        "period": "Monthly",
+        "value": 0.0866,
+        "unadjustedValue": 0.0866,
+        "currency": "CAD"
+    },
+    {
+        "date": "2025-10-29",
+        "declarationDate": "2025-10-20",
+        "recordDate": "2025-10-29",
+        "paymentDate": "2025-11-04",
+        "period": "Monthly",
+        "value": 0.0866,
+        "unadjustedValue": 0.0866,
+        "currency": "CAD"
+    },
+    {
+        "date": "2025-11-26",
+        "declarationDate": "2025-11-18",
+        "recordDate": "2025-11-26",
+        "paymentDate": "2025-12-02",
+        "period": "Monthly",
+        "value": 0.0866,
+        "unadjustedValue": 0.0866,
+        "currency": "CAD"
+    },
+    {
+        "date": "2025-12-29",
+        "declarationDate": "2025-12-17",
+        "recordDate": "2025-12-29",
+        "paymentDate": "2026-01-05",
+        "period": "Monthly",
+        "value": 0.0866,
+        "unadjustedValue": 0.0866,
+        "currency": "CAD"
+    },
+    {
+        "date": "2026-01-28",
+        "declarationDate": "2026-01-20",
+        "recordDate": "2026-01-28",
+        "paymentDate": "2026-02-03",
+        "period": "Monthly",
+        "value": 0.0866,
+        "unadjustedValue": 0.0866,
+        "currency": "CAD"
+    },
+    {
+        "date": "2026-02-25",
+        "declarationDate": "2026-02-17",
+        "recordDate": "2026-02-25",
+        "paymentDate": "2026-03-03",
+        "period": "Monthly",
+        "value": 0.0866,
+        "unadjustedValue": 0.0866,
+        "currency": "CAD"
+    },
+    {
+        "date": "2026-03-27",
+        "declarationDate": "2026-03-18",
+        "recordDate": "2026-03-27",
+        "paymentDate": "2026-04-02",
+        "period": "Monthly",
+        "value": 0.0866,
+        "unadjustedValue": 0.0866,
+        "currency": "CAD"
+    },
+    {
+        "date": "2026-04-28",
+        "declarationDate": "2026-04-17",
+        "recordDate": "2026-04-28",
+        "paymentDate": "2026-05-04",
+        "period": "Monthly",
+        "value": 0.0866,
+        "unadjustedValue": 0.0866,
+        "currency": "CAD"
+    },
+    {
+        "date": "2026-05-27",
+        "declarationDate": "2026-05-15",
+        "recordDate": "2026-05-27",
+        "paymentDate": "2026-06-02",
+        "period": "Monthly",
+        "value": 0.0866,
+        "unadjustedValue": 0.0866,
+        "currency": "CAD"
+    },
+    {
+        "date": "2026-06-26",
+        "declarationDate": "2026-06-17",
+        "recordDate": "2026-06-26",
+        "paymentDate": "2026-07-03",
+        "period": "Monthly",
+        "value": 0.0866,
+        "unadjustedValue": 0.0866,
+        "currency": "CAD"
+    },
+    {
+        "date": "2026-07-29",
+        "declarationDate": "2026-07-20",
+        "recordDate": "2026-07-29",
+        "paymentDate": "2026-08-05",
+        "period": "Monthly",
+        "value": 0.0815,
+        "unadjustedValue": 0.0815,
+        "currency": "CAD"
+    },
+    {
+        "date": "2026-08-27",
+        "declarationDate": "2026-08-18",
+        "recordDate": "2026-08-27",
+        "paymentDate": "2026-09-02",
+        "period": "Monthly",
+        "value": 0.0815,
+        "unadjustedValue": 0.0815,
+        "currency": "CAD"
+    },
+    {
+        "date": "2026-09-28",
+        "declarationDate": "2026-09-17",
+        "recordDate": "2026-09-28",
+        "paymentDate": "2026-10-02",
+        "period": "Monthly",
+        "value": 0.0815,
+        "unadjustedValue": 0.0815,
+        "currency": "CAD"
+    },
+    {
+        "date": "2026-10-28",
+        "declarationDate": "2026-10-19",
+        "recordDate": "2026-10-28",
+        "paymentDate": "2026-11-03",
+        "period": "Monthly",
+        "value": 0.0815,
+        "unadjustedValue": 0.0815,
+        "currency": "CAD"
+    },
+    {
+        "date": "2026-11-26",
+        "declarationDate": "2026-11-17",
+        "recordDate": "2026-11-26",
+        "paymentDate": "2026-12-02",
+        "period": "Monthly",
+        "value": 0.0815,
+        "unadjustedValue": 0.0815,
+        "currency": "CAD"
+    }
+]

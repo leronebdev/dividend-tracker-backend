@@ -3,6 +3,7 @@ package com.serverside.dt.providers;
 import java.util.Collections;
 import java.util.List;
 
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 
 import com.serverside.dt.clients.BusinessQuantClient;
@@ -20,6 +21,7 @@ public class BusinessQuantDividendDataProvider implements DividendDataProvider {
 	private final BusinessQuantClient businessQuantClient;
 
 	@Override
+	@Cacheable("dividendHistory")
 	public List<DividendRecord> getDividends(String ticker) {
 
 		log.debug("Retrieving dividend data from BusinessQuant for ticker [{}]", ticker);
@@ -35,6 +37,12 @@ public class BusinessQuantDividendDataProvider implements DividendDataProvider {
 
 		return response.data().stream().map(dividend -> toDividendRecord(ticker, dividend)).toList();
 	}
+	
+	 @Override
+	    public boolean supports(String ticker) {
+
+	        return !ticker.endsWith(".TO");
+	    }
 
 	private DividendRecord toDividendRecord(String ticker, BusinessQuantDividendResponse.DividendData dividend) {
 

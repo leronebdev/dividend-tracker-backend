@@ -57,6 +57,7 @@ public class PayoutChangedListener {
             BigDecimal totalAmount = shares.multiply(details.getDividendPerShare());
 
             // 4️⃣ FX rate (placeholder or dynamic)
+            
             BigDecimal fxRate = new BigDecimal("1.36");
 
             // 5️⃣ Check if a dividend event already exists for this account + stock + detail

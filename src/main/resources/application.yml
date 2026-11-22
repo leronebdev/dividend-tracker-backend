@@ -26,12 +26,19 @@ dividend-tracker:
     api-url: "https://api.frankfurter.app"
   businessquant:
     base-url: https://data.businessquant.com 
-    #//http://localhost:8089
+    #base-url: http://localhost:8089
       #https://data.businessquant.com
     api-key: 044a92df37d4871de99c2ef2dd59b99e
   finnhub:
     base-url: https://finnhub.io/api/v1
     api-key: dbv15l1r01qrflsn653gdbv15l1r01qrflsn6540
+  alphavantage: 
+    base-url: https://www.alphavantage.co
+    api-key: 2XGAG18GOK0C7BRO
+  eodhd:
+    #base-url: https://eodhd.com/api
+    base-url: http://localhost:8090/api
+    api-key: 6b0080829e62c7.04887836
   jobs:
     dividend-sync:
-      cron: "0 0 */6 * * *"
+      cron: "0 */15 * * * *"
