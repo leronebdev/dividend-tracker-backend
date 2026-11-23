@@ -31,9 +31,10 @@ public class FinnhubClientImpl implements FinnhubClient {
 
 
 	@Override
-	 @Cacheable("stockPrices")
+	 @Cacheable("stockPricesFH")
 	public BigDecimal getCurrentPrice(String ticker) {
-		if(ticker.contains(".")) return new BigDecimal(0);
+		if(ticker.contains(".")) 
+		    return new BigDecimal(0);
 		FinnhubQuoteResponse response = restClient.get().uri(uriBuilder -> uriBuilder.path("/quote")
 				.queryParam("symbol", ticker).queryParam("token", finnhubProperties.getApiKey()).build()).retrieve()
 				.body(FinnhubQuoteResponse.class);

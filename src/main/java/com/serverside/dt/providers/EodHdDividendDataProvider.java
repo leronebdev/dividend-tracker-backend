@@ -23,7 +23,7 @@ public class EodHdDividendDataProvider implements DividendDataProvider {
 	private final EodHdDividendMapper eodHdDividendMapper;
 
 	@Override
-	@Cacheable("dividendHistory")
+	@Cacheable("dividendHistoryEOD")
 	public List<DividendRecord> getDividends(String ticker) {
 		log.debug("Retrieving dividend data from EODHD for ticker [{}]", ticker);
 

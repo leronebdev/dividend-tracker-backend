@@ -21,7 +21,7 @@ public class BusinessQuantDividendDataProvider implements DividendDataProvider {
 	private final BusinessQuantClient businessQuantClient;
 
 	@Override
-	@Cacheable("dividendHistory")
+	@Cacheable("dividendHistoryBQ")
 	public List<DividendRecord> getDividends(String ticker) {
 
 		log.debug("Retrieving dividend data from BusinessQuant for ticker [{}]", ticker);

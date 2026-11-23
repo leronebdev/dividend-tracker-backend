@@ -3,19 +3,20 @@ package com.serverside.dt.clients.impl;
 
 import java.math.BigDecimal;
 import java.net.URI;
-
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.util.UriComponentsBuilder;
-
 import com.serverside.dt.clients.AlphaVantageClient;
 import com.serverside.dt.config.AlphaVantageProperties;
 import com.serverside.dt.mappers.AlphaVantageGlobalQuoteMapper;
 import com.serverside.dt.records.AlphaVantageGlobalQuoteResponse;
 import com.serverside.dt.records.StockPriceRecord;
-
+import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 
 
@@ -26,6 +27,8 @@ public class AlphaVantageClientImpl implements AlphaVantageClient {
 	
 	private final RestClient restClient;
     private final AlphaVantageProperties alphaVantageProperties;
+    @Autowired
+    private CacheManager cacheManager;
     private final AlphaVantageGlobalQuoteMapper alphaVantageGlobalQuoteMapper;
 	
     public AlphaVantageClientImpl(@Qualifier("alphaVantageClient") RestClient restClient, AlphaVantageProperties alphaVantageProperties,
@@ -36,11 +39,12 @@ public class AlphaVantageClientImpl implements AlphaVantageClient {
 		this.alphaVantageGlobalQuoteMapper = alphaVantageGlobalQuoteMapper;
 	}
     
+       
 	@Override
-	//@Cacheable("stockPrices")
-	public BigDecimal getCurrentPrice(String ticker) {
+	@Cacheable("stockPricesAV")
+	public BigDecimal getCurrentPrice(String ticker) {	    
+	   
 
-		if(ticker.contains(" ")) return new BigDecimal(0);
 		URI uri = UriComponentsBuilder
 		        .fromPath("/query")
 		        .queryParam("symbol", ticker)
@@ -58,8 +62,10 @@ public class AlphaVantageClientImpl implements AlphaVantageClient {
 			log.error("No quote returned for " + ticker);
 			return new BigDecimal(0);
 		}
-		StockPriceRecord stockPricRecord = alphaVantageGlobalQuoteMapper.toRecord(response);
-		return stockPricRecord.currentPrice();
+		StockPriceRecord stockPriceRecord = alphaVantageGlobalQuoteMapper.toRecord(response);
+		if(stockPriceRecord == null)
+		    System.out.println("TICKER: " + ticker + " Failed!!!!");
+		return stockPriceRecord.currentPrice();
 
 	}
 
