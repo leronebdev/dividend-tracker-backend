@@ -58,7 +58,7 @@ public class AlphaVantageClientImpl implements AlphaVantageClient {
 		        .retrieve()
 		        .body(AlphaVantageGlobalQuoteResponse.class);
 		
-		if (response == null) {
+		if (response == null || response.globalQuote() == null) {
 			log.error("No quote returned for " + ticker);
 			return new BigDecimal(0);
 		}
