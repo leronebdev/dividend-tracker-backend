@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "com.serverside.dt"
-version = "0.0.1-SNAPSHOT"
+version = "1.3.0"
 description = "Backend for the dividend tracker"
 
 java {
@@ -22,8 +22,8 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-cache")
     implementation("org.ehcache:ehcache:3.10.8")
-    implementation("jakarta.xml.bind:jakarta.xml.bind-api")
-    implementation("org.glassfish.jaxb:jaxb-runtime")
+    implementation("javax.xml.bind:jaxb-api:2.3.1")
+    implementation("org.glassfish.jaxb:jaxb-runtime:2.3.8")
     implementation("org.springframework.boot:spring-boot-starter-webmvc")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
    implementation("org.mapstruct:mapstruct:1.6.3")
