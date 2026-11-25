@@ -1,8 +1,10 @@
 package com.serverside.dt.mock;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.matching;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 import org.springframework.boot.CommandLineRunner;
@@ -46,13 +48,6 @@ public class EodHdWireMockServer implements CommandLineRunner {
 		wireMockServer.stubFor(get(urlPathEqualTo("/api/div/CDZ.TO")).withQueryParam("api_token", matching(".*"))
 				.willReturn(aResponse().withStatus(200).withHeader("Content-Type", "application/json")
 						.withBody(loadResponse("wiremock/cdz-dividend-response.json"))));
-	}
-
-	private String loadResponse() throws IOException {
-
-		ClassPathResource resource = new ClassPathResource("wiremock/eodhd-dividend-response.json");
-
-		return new String(resource.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
 	}
 
 	private String loadResponse(String path) {

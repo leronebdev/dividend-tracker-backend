@@ -2,20 +2,21 @@ package com.serverside.dt.jobs.services;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
-import org.springframework.context.ApplicationEventPublisher;
+
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import com.serverside.dt.dtos.DividendDetailTO;
 import com.serverside.dt.dtos.StockDTO;
 import com.serverside.dt.dtos.StockDividendDetailsDTO;
 import com.serverside.dt.entities.DividendFrequency;
-import com.serverside.dt.mappers.StockDividendDetailsMapper;
 import com.serverside.dt.providers.DividendDataProvider;
 import com.serverside.dt.records.DividendRecord;
 import com.serverside.dt.services.DividendDetailService;
 import com.serverside.dt.services.DividendFrequencyService;
 import com.serverside.dt.services.StockService;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 @Service
@@ -29,8 +30,7 @@ public class DividendSynchronizationService
     private final DividendDetailService dividendDetailsService;
     private final DividendFrequencyService dividendFrequencyService;
     private final DividendDataProvider dividendDataProvider;
-    private final ApplicationEventPublisher eventPublisher;
-    private final StockDividendDetailsMapper stockDividendDetailsMapper;
+
     
     public synchronized void synchronize() {
 	log.info("Starting dividend synchronization.");

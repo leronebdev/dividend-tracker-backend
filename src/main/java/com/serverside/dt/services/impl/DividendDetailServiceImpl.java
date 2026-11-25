@@ -50,10 +50,10 @@ public class DividendDetailServiceImpl implements DividendDetailService {
 	public DividendDetailTO create(DividendDetailTO detailTO) {
 
 		UUID stockId = UUID.fromString(detailTO.getStockId());
-		DividendFrequency frequency = dividendFrequencyRepo
-				.findByPeriodsPerYear(Integer.valueOf(detailTO.getFrequency()))
-
-				.orElseThrow(() -> new IllegalArgumentException("Frequency not found: " + detailTO.getFrequency()));
+//		DividendFrequency frequency = dividendFrequencyRepo
+//				.findByPeriodsPerYear(Integer.valueOf(detailTO.getFrequency()))
+//
+//				.orElseThrow(() -> new IllegalArgumentException("Frequency not found: " + detailTO.getFrequency()));
 
 		Optional<StockDividendDetails> existingStockDividendDetails = stockDividendDetailsRepo
 				.findTopByStockIdOrderByExDateDesc(stockId);

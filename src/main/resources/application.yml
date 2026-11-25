@@ -1,6 +1,9 @@
 spring:
   profiles:
     active: dev, wiremock
+  cache:
+    jcache:
+      config: classpath:ehcache.xml
 
   datasource:
     url: jdbc:postgresql://merciful:5438/dividend_tracker_dev

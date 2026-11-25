@@ -1,5 +1,6 @@
 package com.serverside.dt.records;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
@@ -9,5 +10,5 @@ public record StockPriceRecord(
         BigDecimal previousClose,
         BigDecimal change,
         LocalDate lastTradingDay
-) {
+) implements Serializable{
 }
