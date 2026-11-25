@@ -15,7 +15,7 @@ public class DividendSynchronizationJob {
     //private final DividendSynchronizationService synchronizationService;
     private final DividendSynchronizationOrchestrator synchronizationService;
 
-    @Scheduled(cron = "${dividend-tracker.jobs.dividend-sync.cron}")
+    @Scheduled(cron = "${dividend-tracker.jobs.dividend-sync.cron}", zone = "${dividend-tracker.jobs.dividend-sync.timezone}")
     public void execute() {
 
         log.info("Starting dividend synchronization");

@@ -41,4 +41,5 @@ cors:
       api-key: 6b0080829e62c7.04887836
     jobs:
       dividend-sync:
-        cron: "0 */15 * * * *"
+        cron: "0 0 2 * * *"
+        timezone: "America/Toronto"
