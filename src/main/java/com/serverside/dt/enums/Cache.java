@@ -1,5 +1,9 @@
 package com.serverside.dt.enums;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
 public enum Cache {
     STOCK_PRICES_FH("stockPricesFH"),
     STOCK_PRICES_AV("stockPricesAV"),
@@ -11,6 +15,12 @@ public enum Cache {
 
     Cache(String cacheName) {
         this.cacheName = cacheName;
+    }
+
+    @Override
+    public String toString() {	
+	
+	return cacheName;
     }
 
     /**
@@ -26,7 +36,15 @@ public enum Cache {
         }
         return null;
     }
+    public static List<String> getAllCacheNames()
+    {
+	List<Cache> allCaches = Arrays.asList(Cache.values());
+	List<String> names = allCaches.stream()
+	    .map(Cache::getCacheName)
+	    .collect(Collectors.toList());
+	return names;
 
+    }
     /**
      * Gets an enum by its cache name string.
      * @param cacheName the cache name to look up
@@ -55,14 +73,4 @@ public enum Cache {
         return cacheName;
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (!(obj instanceof String)) {
-            return false;
-        }
-        return cacheName.equals(obj);
-    }
 }

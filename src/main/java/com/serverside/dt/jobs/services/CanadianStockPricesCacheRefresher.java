@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import com.serverside.dt.Currency;
 import com.serverside.dt.clients.AlphaVantageClient;
 import com.serverside.dt.dtos.StockDTO;
+import com.serverside.dt.enums.Cache;
 import com.serverside.dt.services.StockService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +20,7 @@ public class CanadianStockPricesCacheRefresher implements CacheRefresher
     private final AlphaVantageClient alphaVantageClient;
     private final StockService stockService;
     @Override
-    public boolean refreshCache(String cache) {
+    public boolean refreshCache() {
 	List<StockDTO>canadianStocks = stockService.getAll().stream().filter(s->Currency.CAD.equals(s.getCurrencyCode())).distinct().collect(Collectors.toList());	
 	canadianStocks.forEach(canadianStock->{
 	    BigDecimal currentPrice = alphaVantageClient.getCurrentPrice(canadianStock.getTicker());
@@ -33,5 +34,10 @@ public class CanadianStockPricesCacheRefresher implements CacheRefresher
 	    }
 	});
 	return true;
+    }
+    @Override
+    public Cache getCache() {
+	
+	return Cache.STOCK_PRICES_AV;
     }
 }
