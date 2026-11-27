@@ -14,7 +14,7 @@
 		<value-type>java.lang.Object</value-type>
 
 		<expiry>
-			<ttl unit="hours">20</ttl>
+			<ttl unit="minutes">2</ttl>
 		</expiry>
 
 		<resources>
@@ -59,7 +59,7 @@
         <value-type>java.lang.Object</value-type>
 
         <expiry>
-            <ttl unit="hours">23</ttl>
+            <ttl unit="minutes">2</ttl>
         </expiry>
 
         <resources>
