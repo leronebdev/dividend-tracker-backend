@@ -338,5 +338,15 @@
         "value": 0.084,
         "unadjustedValue": 0.084,
         "currency": "CAD"
-    }
+    },
+    {
+           "date": "2026-11-26",
+           "declarationDate": "2026-11-23",
+           "recordDate": "2026-11-29",
+           "paymentDate": "2026-12-04",
+           "period": "Monthly",
+           "value": 0.084,
+           "unadjustedValue": 0.084,
+           "currency": "CAD"
+       }
 ]
