@@ -20,6 +20,7 @@ import com.serverside.dt.config.FinnhubProperties;
 public class DividendTrackerServerApplication {
 
 	public static void main(String[] args) {
+		
 		SpringApplication.run(DividendTrackerServerApplication.class, args);
 	}
 

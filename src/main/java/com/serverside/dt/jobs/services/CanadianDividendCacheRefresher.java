@@ -18,7 +18,7 @@ public class CanadianDividendCacheRefresher implements CacheRefresher
     private final StockService stockService;
     @Override
     public boolean refreshCache() {
-	List<StockDTO>canadianStocks = stockService.getAll().stream().filter(s->Currency.CAD.equals(s.getCurrencyCode())).distinct().collect(Collectors.toList());
+	List<StockDTO>canadianStocks = stockService.getAll().stream().filter(s->Currency.CAD.toString().equals(s.getCurrencyCode())).distinct().collect(Collectors.toList());
 	canadianStocks.forEach(canadianStock->{
 	    dividendProviderFactory.getProvider(canadianStock.getTicker()).getDividends(canadianStock.getTicker());
 	});

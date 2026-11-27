@@ -21,7 +21,7 @@ public class CanadianStockPricesCacheRefresher implements CacheRefresher
     private final StockService stockService;
     @Override
     public boolean refreshCache() {
-	List<StockDTO>canadianStocks = stockService.getAll().stream().filter(s->Currency.CAD.equals(s.getCurrencyCode())).distinct().collect(Collectors.toList());	
+	List<StockDTO>canadianStocks = stockService.getAll().stream().filter(s->Currency.CAD.toString().equals(s.getCurrencyCode())).distinct().collect(Collectors.toList());	
 	canadianStocks.forEach(canadianStock->{
 	    BigDecimal currentPrice = alphaVantageClient.getCurrentPrice(canadianStock.getTicker());
 	    if(BigDecimal.ZERO.equals(currentPrice))

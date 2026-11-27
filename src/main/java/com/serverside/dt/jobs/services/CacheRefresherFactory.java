@@ -14,7 +14,7 @@ public class CacheRefresherFactory
     
     public CacheRefresher getInstance(Cache cache)
     {
-	return cacheRefreshers.stream().filter(cacheRefresher->cacheRefresher.getCache().equals(cache))
+	return cacheRefreshers.stream().filter(cacheRefresher->cacheRefresher.getCache().name().equals(cache.name()))
 		.findFirst().orElseThrow(()->new NotFoundException("No Cache refresher was found for "  + cache.toString()));
     }
 }
